@@ -3,7 +3,6 @@ import '../styles/global.css';
 import hero from '../data/hero.json';
 import drops from '../data/drops.json';
 import news from '../data/news.json';
-import resale from '../data/resale.json';
 ---
 <!DOCTYPE html>
 <html lang="es">
@@ -27,7 +26,6 @@ import resale from '../data/resale.json';
     <nav>
       <a href="#lanzamientos">Lanzamientos</a>
       <a href="#noticias">Noticias</a>
-      <a href="#reventa">Reventa</a>
       <a href="#">Guías</a>
     </nav>
     <a class="btn-subscribe" href="#newsletter">Suscríbete</a>
@@ -100,29 +98,6 @@ import resale from '../data/resale.json';
         ))}
       </div>
     </div>
-  </section>
-
-  <section class="block resale" id="reventa">
-    <div class="block-head">
-      <h2>En reventa ahora</h2>
-      <a class="see-all" href="#">Ver mercado completo</a>
-    </div>
-    <table>
-      <thead>
-        <tr><th>Modelo</th><th>Precio salida</th><th>Reventa media</th><th>Variación 7d</th></tr>
-      </thead>
-      <tbody>
-        {resale.map((r) => (
-          <tr>
-            <td class="model">{r.model}</td>
-            <td class="num">{r.retail}</td>
-            <td class="num">{r.resale}</td>
-            <td class={`${r.direction} num`}>{r.change}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    <p class="disclosure">Precios de referencia recopilados de plataformas de reventa. Algunos enlaces de esta sección son de afiliados: si compras a través de ellos, podemos recibir una comisión sin coste adicional para ti.</p>
   </section>
 
   <section class="block newsletter" id="newsletter">
