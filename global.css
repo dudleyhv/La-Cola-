@@ -1,0 +1,148 @@
+:root{
+  --ink:#17161A;
+  --paper:#EAEAE6;
+  --panel:#DAD9D2;
+  --panel-2:#F4F4F1;
+  --muted:#605F58;
+  --line:#C3C2B9;
+  --yellow:#F4C10F;
+  --red:#D8402A;
+  --white:#FFFFFF;
+  --radius-tag: 4px;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+h1,h2,h3{font-family:'Archivo Black',sans-serif;font-weight:400;margin:0;line-height:1.02;letter-spacing:-0.01em;}
+a{color:inherit;text-decoration:none;}
+a:focus-visible, button:focus-visible, input:focus-visible{
+  outline:3px solid var(--red); outline-offset:2px;
+}
+.num{font-family:'IBM Plex Mono',monospace;}
+
+/* ---------- Header ---------- */
+.site-header{border-bottom:1px solid var(--line); background:var(--paper); position:sticky; top:0; z-index:10;}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:76px;}
+.wordmark{font-family:'Archivo Black',sans-serif;font-size:22px;letter-spacing:-0.01em;}
+.wordmark span{color:var(--red);}
+nav{display:flex;gap:28px;}
+nav a{font-size:14px;font-weight:600;color:var(--muted);transition:color .15s;}
+nav a:hover{color:var(--ink);}
+.btn-subscribe{
+  background:var(--ink);color:var(--paper);font-size:14px;font-weight:600;
+  padding:10px 18px;border-radius:var(--radius-tag); white-space:nowrap;
+}
+.btn-subscribe:hover{background:var(--red);}
+
+/* ---------- Hero (drop-of-the-day ticket) ---------- */
+.hero{display:grid;grid-template-columns:1fr 1.1fr;gap:0;margin:48px 0 64px;align-items:stretch;}
+.ticket{
+  background:var(--white); border:1px solid var(--line); position:relative;
+  padding:32px 32px 28px; display:flex; flex-direction:column; gap:18px;
+}
+.ticket::after{
+  content:"";position:absolute;right:-9px;top:0;bottom:0;width:18px;
+  background-image: radial-gradient(circle at 9px 0, transparent 9px, var(--paper) 9.5px);
+  background-size:18px 32px; background-repeat:repeat-y;
+}
+.ticket-eyebrow-row{display:flex;align-items:center;justify-content:space-between;}
+.tag-pill{
+  font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--white);
+  background:var(--red);padding:5px 10px;border-radius:var(--radius-tag);
+}
+.countdown{font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--muted);}
+.ticket h1{font-size:34px;}
+.ticket .meta{font-size:14px;color:var(--muted);}
+.ticket .price-row{display:flex;align-items:baseline;gap:10px;margin-top:auto;padding-top:12px;border-top:1px dashed var(--line);}
+.price-row .price{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;}
+.price-row .store{font-size:13px;color:var(--muted);}
+.cta{
+  margin-top:6px;display:inline-flex;align-items:center;justify-content:center;
+  background:var(--ink);color:var(--paper);font-weight:600;font-size:14px;
+  padding:13px 20px;border-radius:var(--radius-tag);width:fit-content;transition:background .15s;
+}
+.cta:hover{background:var(--red);}
+
+.hero-art{
+  background:linear-gradient(155deg,#232228 0%,#17161A 55%,#0F0F12 100%);
+  position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
+}
+.hero-art svg{width:78%;height:auto;}
+
+/* ---------- Section headers ---------- */
+section.block{margin:64px 0;}
+.block-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap;}
+.block-head h2{font-size:24px;}
+.block-head .see-all{font-size:13px;font-weight:600;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:2px;}
+.block-head .see-all:hover{color:var(--ink);border-color:var(--ink);}
+
+/* ---------- Calendar strip ---------- */
+.cal-row{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity;}
+.cal-card{
+  scroll-snap-align:start;flex:0 0 190px;background:var(--panel-2);border:1px solid var(--line);
+  border-radius:var(--radius-tag);padding:16px;display:flex;flex-direction:column;gap:10px;
+}
+.cal-day{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+.cal-date{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;}
+.cal-model{font-size:14px;font-weight:600;line-height:1.3;min-height:36px;}
+.cal-foot{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;}
+
+/* ---------- News grid ---------- */
+.news-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;}
+.news-feature{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-tag);padding:26px;display:flex;flex-direction:column;gap:12px;}
+.news-feature h3{font-size:26px;}
+.news-feature p{color:var(--muted);font-size:15px;max-width:46ch;}
+.news-side{display:flex;flex-direction:column;gap:14px;}
+.news-card{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-tag);padding:18px;display:flex;flex-direction:column;gap:6px;}
+.news-card h4{font-size:16px;font-family:'Inter',sans-serif;font-weight:700;margin:0;}
+.news-card .topic{font-size:12px;color:var(--red);font-weight:600;}
+
+/* ---------- Resale ticker ---------- */
+.resale table{width:100%;border-collapse:collapse;font-size:14px;}
+.resale th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:0 12px 10px;border-bottom:1px solid var(--line);}
+.resale td{padding:14px 12px;border-bottom:1px solid var(--line);}
+.resale tr:last-child td{border-bottom:none;}
+.resale .model{font-weight:700;}
+.up{color:#2E7D42;font-family:'IBM Plex Mono',monospace;}
+.down{color:var(--red);font-family:'IBM Plex Mono',monospace;}
+.disclosure{font-size:12px;color:var(--muted);margin-top:14px;max-width:60ch;}
+
+/* ---------- Newsletter ---------- */
+.newsletter{background:var(--ink);color:var(--paper);border-radius:var(--radius-tag);padding:44px;display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:center;}
+.newsletter h2{color:var(--paper);font-size:26px;max-width:16ch;}
+.newsletter p{color:#B9B8B0;font-size:14px;max-width:40ch;margin:10px 0 0;}
+.sub-form{display:flex;gap:10px;}
+.sub-form input{
+  flex:1;padding:13px 14px;border-radius:var(--radius-tag);border:1px solid #3A3940;
+  background:#211F25;color:var(--paper);font-family:'Inter',sans-serif;font-size:14px;
+}
+.sub-form input::placeholder{color:#8B8A83;}
+.sub-form button{
+  background:var(--yellow);color:var(--ink);font-weight:700;font-size:14px;border:none;
+  padding:13px 20px;border-radius:var(--radius-tag);cursor:pointer;transition:background .15s;
+}
+.sub-form button:hover{background:var(--white);}
+
+/* ---------- Footer ---------- */
+footer{border-top:1px solid var(--line);margin-top:64px;padding:32px 0 48px;}
+.foot-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);}
+
+/* ---------- Responsive ---------- */
+@media (max-width:760px){
+  nav{display:none;}
+  .hero{grid-template-columns:1fr;}
+  .hero-art{min-height:220px;}
+  .news-grid{grid-template-columns:1fr;}
+  .newsletter{grid-template-columns:1fr;padding:28px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;}
+}

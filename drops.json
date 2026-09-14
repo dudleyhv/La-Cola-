@@ -1,0 +1,7 @@
+[
+  { "day": "Martes",    "date": "16.09", "model": "New Balance 990v3 \"Grey Day\"",  "time": "10:00", "price": "220 €" },
+  { "day": "Miércoles", "date": "17.09", "model": "Adidas Samba x colección local",  "time": "09:00", "price": "110 €" },
+  { "day": "Jueves",    "date": "18.09", "model": "Air Max \"Since 96\" retro",       "time": "11:00", "price": "175 €" },
+  { "day": "Viernes",   "date": "19.09", "model": "Salomon XT-6 restock",             "time": "10:00", "price": "190 €" },
+  { "day": "Sábado",    "date": "20.09", "model": "Cápsula skate x tienda local",     "time": "12:00", "price": "desde 45 €" }
+]

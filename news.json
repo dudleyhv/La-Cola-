@@ -1,0 +1,13 @@
+{
+  "feature": {
+    "topic": "Reventa",
+    "title": "Por qué el precio de reventa de las New Balance 990 no deja de subir",
+    "excerpt": "Los datos de las últimas ocho semanas muestran un patrón claro: la escasez de tallas grandes está inflando el mercado secundario más que el hype en sí.",
+    "url": "#"
+  },
+  "side": [
+    { "topic": "Colaboraciones", "title": "Una marca de skate madrileña confirma cápsula con Vans", "url": "#" },
+    { "topic": "Tiendas", "title": "Footlocker adelanta su calendario de restocks de octubre", "url": "#" },
+    { "topic": "Cultura", "title": "Cómo las colas físicas están volviendo pese a las apps de sorteo", "url": "#" }
+  ]
+}

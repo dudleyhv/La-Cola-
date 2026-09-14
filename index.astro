@@ -1,0 +1,149 @@
+---
+import '../styles/global.css';
+import hero from '../data/hero.json';
+import drops from '../data/drops.json';
+import news from '../data/news.json';
+import resale from '../data/resale.json';
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Cola — Sneakers y streetwear al día</title>
+  <meta name="description" content="Lanzamientos, restocks y noticias de sneakers y streetwear, actualizado cada día." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="/">La <span>Cola</span></a>
+    <nav>
+      <a href="#lanzamientos">Lanzamientos</a>
+      <a href="#noticias">Noticias</a>
+      <a href="#reventa">Reventa</a>
+      <a href="#">Guías</a>
+    </nav>
+    <a class="btn-subscribe" href="#newsletter">Suscríbete</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="ticket">
+      <div class="ticket-eyebrow-row">
+        <span class="tag-pill">{hero.tag}</span>
+        <span class="countdown">Cierra en <strong class="num">{hero.countdown}</strong></span>
+      </div>
+      <h1>{hero.title}</h1>
+      <p class="meta">{hero.description}</p>
+      <div class="price-row">
+        <span class="price">{hero.price}</span>
+        <span class="store">{hero.store}</span>
+      </div>
+      <a class="cta" href={hero.ctaUrl}>{hero.ctaText}</a>
+    </div>
+    <div class="hero-art">
+      <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 190 C 60 150, 90 120, 150 110 C 190 103, 210 95, 250 78 C 275 68, 300 66, 330 78 C 355 88, 372 108, 378 132 C 382 150, 372 168, 350 176 L 60 214 C 35 217, 18 208, 20 190 Z" fill="#F4C10F"></path>
+        <path d="M20 190 C 60 150, 90 120, 150 110 C 190 103, 210 95, 250 78 C 275 68, 300 66, 330 78" fill="none" stroke="#17161A" stroke-width="3"></path>
+        <path d="M60 214 L350 176 L372 196 L80 232 Z" fill="#F4F4F1"></path>
+        <circle cx="118" cy="150" r="3" fill="#17161A"></circle>
+        <circle cx="140" cy="140" r="3" fill="#17161A"></circle>
+        <circle cx="162" cy="131" r="3" fill="#17161A"></circle>
+        <circle cx="184" cy="123" r="3" fill="#17161A"></circle>
+      </svg>
+    </div>
+  </section>
+
+  <section class="block" id="lanzamientos">
+    <div class="block-head">
+      <h2>Calendario de lanzamientos</h2>
+      <a class="see-all" href="#">Ver todos</a>
+    </div>
+    <div class="cal-row">
+      {drops.map((d) => (
+        <div class="cal-card">
+          <span class="cal-day">{d.day}</span>
+          <span class="cal-date num">{d.date}</span>
+          <span class="cal-model">{d.model}</span>
+          <div class="cal-foot"><span>{d.time}</span><span>{d.price}</span></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="block" id="noticias">
+    <div class="block-head">
+      <h2>Noticias</h2>
+      <a class="see-all" href="#">Ver todas</a>
+    </div>
+    <div class="news-grid">
+      <a class="news-feature" href={news.feature.url}>
+        <span class="topic">{news.feature.topic}</span>
+        <h3>{news.feature.title}</h3>
+        <p>{news.feature.excerpt}</p>
+      </a>
+      <div class="news-side">
+        {news.side.map((n) => (
+          <a class="news-card" href={n.url}>
+            <span class="topic">{n.topic}</span>
+            <h4>{n.title}</h4>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="block resale" id="reventa">
+    <div class="block-head">
+      <h2>En reventa ahora</h2>
+      <a class="see-all" href="#">Ver mercado completo</a>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Modelo</th><th>Precio salida</th><th>Reventa media</th><th>Variación 7d</th></tr>
+      </thead>
+      <tbody>
+        {resale.map((r) => (
+          <tr>
+            <td class="model">{r.model}</td>
+            <td class="num">{r.retail}</td>
+            <td class="num">{r.resale}</td>
+            <td class={`${r.direction} num`}>{r.change}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p class="disclosure">Precios de referencia recopilados de plataformas de reventa. Algunos enlaces de esta sección son de afiliados: si compras a través de ellos, podemos recibir una comisión sin coste adicional para ti.</p>
+  </section>
+
+  <section class="block newsletter" id="newsletter">
+    <div>
+      <h2>No te pierdas ningún drop</h2>
+      <p>Un aviso al día con los lanzamientos, restocks y noticias que de verdad importan. Sin spam.</p>
+    </div>
+    <form class="sub-form">
+      <input type="email" placeholder="tu@email.com" aria-label="Correo electrónico" required />
+      <button type="submit">Apuntarme</button>
+    </form>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>© 2026 La Cola</span>
+    <span>Aviso de afiliados · Contacto · Envía un drop</span>
+  </div>
+</footer>
+
+</body>
+</html>

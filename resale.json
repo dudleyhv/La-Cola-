@@ -1,0 +1,6 @@
+[
+  { "model": "Dunk Low \"Asfalto\"",   "retail": "135 €", "resale": "210 €", "change": "+12 %", "direction": "up" },
+  { "model": "New Balance 990v3",      "retail": "220 €", "resale": "245 €", "change": "+4 %",  "direction": "up" },
+  { "model": "Air Max \"Since 96\"",   "retail": "175 €", "resale": "160 €", "change": "−9 %",  "direction": "down" },
+  { "model": "Salomon XT-6",           "retail": "190 €", "resale": "205 €", "change": "+8 %",  "direction": "up" }
+]
