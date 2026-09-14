@@ -1,13 +1,25 @@
 {
   "feature": {
-    "topic": "Reventa",
-    "title": "Por qué el precio de reventa de las New Balance 990 no deja de subir",
-    "excerpt": "Los datos de las últimas ocho semanas muestran un patrón claro: la escasez de tallas grandes está inflando el mercado secundario más que el hype en sí.",
-    "url": "#"
+    "topic": "Aniversarios",
+    "title": "Air Jordan 9 regresa con edición especial por el 30 aniversario de Space Jam",
+    "excerpt": "Jordan Brand celebra tres décadas de la icónica película con el retorno del Air Jordan 9 original en su colorway Space Jam. Según recoge Nice Kicks, esta zapatilla histórica vuelve a las tiendas con motivo de la efeméride, confirmando que la nostalgia sigue siendo uno de los grandes motores del mercado sneaker actual.",
+    "url": "https://www.nicekicks.com/air-jordan-9-og-space-jam-ix6179-100-drop/"
   },
   "side": [
-    { "topic": "Colaboraciones", "title": "Una marca de skate madrileña confirma cápsula con Vans", "url": "#" },
-    { "topic": "Tiendas", "title": "Footlocker adelanta su calendario de restocks de octubre", "url": "#" },
-    { "topic": "Cultura", "title": "Cómo las colas físicas están volviendo pese a las apps de sorteo", "url": "#" }
+    {
+      "topic": "Colaboraciones",
+      "title": "Anthony Edwards presenta su primer modelo con adidas Superstar II en azul Bliss",
+      "url": "https://www.nicekicks.com/anthony-edwards-adidas-superstar-ii-bliss-blue-la7828/"
+    },
+    {
+      "topic": "Nuevos Lanzamientos",
+      "title": "Jordan Brand apuesta por materiales premium en la nueva Air Jordan 1 Low Boucle",
+      "url": "https://sneakernews.com/2026/09/13/air-jordan-1-low-boucle-iz6154-121/"
+    },
+    {
+      "topic": "Infantil",
+      "title": "Nike presenta Air Force 1 Kids Beast con temática salvaje para septiembre",
+      "url": "https://sneakernews.com/2026/09/13/nike-air-force-1-easyon-the-beast-iq2292-001/"
+    }
   ]
 }
