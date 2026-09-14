@@ -37,3 +37,4 @@ jobs:
           body: "Este contenido lo ha generado el robot automático a partir de fuentes de noticias reales. Revísalo y, si te convence, acepta esta propuesta (Merge) para publicarlo."
           branch: auto/noticias-diarias
           delete-branch: true
+          add-paths: src/data/*.json
