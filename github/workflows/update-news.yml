@@ -1,0 +1,39 @@
+name: Actualizar noticias
+
+on:
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v7
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Generar noticias nuevas
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/generate-news.mjs
+
+      - name: Crear propuesta de cambio (Pull Request)
+        uses: peter-evans/create-pull-request@v8
+        with:
+          commit-message: "Actualizar noticias del día"
+          title: "📰 Noticias nuevas para revisar"
+          body: "Este contenido lo ha generado el robot automático a partir de fuentes de noticias reales. Revísalo y, si te convence, acepta esta propuesta (Merge) para publicarlo."
+          branch: auto/noticias-diarias
+          delete-branch: true
