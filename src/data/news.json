@@ -1,13 +1,25 @@
 {
   "feature": {
-    "topic": "Reventa",
-    "title": "Por qué el precio de reventa de las New Balance 990 no deja de subir",
-    "excerpt": "Los datos de las últimas ocho semanas muestran un patrón claro: la escasez de tallas grandes está inflando el mercado secundario más que el hype en sí.",
-    "url": "#"
+    "topic": "Lanzamientos",
+    "title": "Jordan Brand celebra los 30 años de Space Jam con el regreso del Air Jordan 9 original",
+    "excerpt": "Según recoge Nice Kicks, Jordan Brand se suma a la conmemoración del aniversario del mítico film con el relanzamiento del Air Jordan 9 que marcó época. Esta semana será especialmente caliente para los seguidores de la marca del Jumpman, con varios lanzamientos de relevancia histórica en el catálogo.",
+    "url": "https://www.nicekicks.com/air-jordan-9-og-space-jam-ix6179-100-drop/"
   },
   "side": [
-    { "topic": "Colaboraciones", "title": "Una marca de skate madrileña confirma cápsula con Vans", "url": "#" },
-    { "topic": "Tiendas", "title": "Footlocker adelanta su calendario de restocks de octubre", "url": "#" },
-    { "topic": "Cultura", "title": "Cómo las colas físicas están volviendo pese a las apps de sorteo", "url": "#" }
+    {
+      "topic": "Colaboraciones",
+      "title": "Jordan Brand apuesta por la sofisticación con el Air Jordan 1 Low \"Boucle\" en tonos lujo",
+      "url": "https://sneakernews.com/2026/09/13/air-jordan-1-low-boucle-iz6154-121/"
+    },
+    {
+      "topic": "Infantil",
+      "title": "Nike presenta el Air Force 1 Kids \"Beast\" para el próximo 20 de septiembre",
+      "url": "https://sneakernews.com/2026/09/13/nike-air-force-1-easyon-the-beast-iq2292-001/"
+    },
+    {
+      "topic": "Colorways",
+      "title": "El Jordan Spiz'ike Low llega en tonos suaves con la versión \"Swan\"",
+      "url": "https://sneakernews.com/2026/09/13/jordan-spizike-low-swan-light-smoke-grey-purple-smoke-ir1836-105/"
+    }
   ]
 }
