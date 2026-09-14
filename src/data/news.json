@@ -1,13 +1,25 @@
 {
   "feature": {
-    "topic": "Reventa",
-    "title": "Por qué el precio de reventa de las New Balance 990 no deja de subir",
-    "excerpt": "Los datos de las últimas ocho semanas muestran un patrón claro: la escasez de tallas grandes está inflando el mercado secundario más que el hype en sí.",
-    "url": "#"
+    "topic": "Aniversarios",
+    "title": "Air Jordan 9 'Space Jam' regresa para celebrar los 30 años de la película",
+    "excerpt": "Jordan Brand trae de vuelta el icónico Air Jordan 9 en su colorway original de 'Space Jam' para conmemorar tres décadas del filme que marcó un antes y un después en la cultura sneaker. Según recoge Nice Kicks, este lanzamiento marca el comienzo oficial de las celebraciones dedicadas a este hito cinematográfico que permanece indeleble en la historia del calzado deportivo.",
+    "url": "https://www.nicekicks.com/air-jordan-9-og-space-jam-ix6179-100-drop/"
   },
   "side": [
-    { "topic": "Colaboraciones", "title": "Una marca de skate madrileña confirma cápsula con Vans", "url": "#" },
-    { "topic": "Tiendas", "title": "Footlocker adelanta su calendario de restocks de octubre", "url": "#" },
-    { "topic": "Cultura", "title": "Cómo las colas físicas están volviendo pese a las apps de sorteo", "url": "#" }
+    {
+      "topic": "Colaboraciones",
+      "title": "Jordan Brand apuesta por el lujo con el Air Jordan 1 Low 'Boucle'",
+      "url": "https://sneakernews.com/2026/09/13/air-jordan-1-low-boucle-iz6154-121/"
+    },
+    {
+      "topic": "Lanzamientos",
+      "title": "Nike Air Force 1 'Beast' llega en talla infantil a mediados de septiembre",
+      "url": "https://sneakernews.com/2026/09/13/nike-air-force-1-easyon-the-beast-iq2292-001/"
+    },
+    {
+      "topic": "Historias",
+      "title": "Air Jordan 1 Low OG 'Last Dance At The Garden' rememora el último partido de Michael Jordan en Chicago",
+      "url": "https://www.nicekicks.com/air-jordan-1-low-og-last-dance-at-the-garden-ir0088-001/"
+    }
   ]
 }
