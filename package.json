@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "generate-news": "node scripts/generate-news.mjs"
   },
   "dependencies": {
-    "astro": "^7.0.0"
+    "astro": "^7.0.0",
+    "rss-parser": "^3.13.0"
   },
   "allowScripts": {
     "esbuild": true
