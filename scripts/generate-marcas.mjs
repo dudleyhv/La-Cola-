@@ -54,7 +54,7 @@ Marcas que YA seguimos (no las seleccciones como "nueva", pero si algún resulta
 
 Tu tarea:
 1. Identifica qué resultados hablan de una marca de streetwear/moda urbana genuinamente nueva o emergente. Descarta resultados irrelevantes, marcas ya masivas/conocidas, o contenido que no trate sobre una marca concreta.
-2. Para cada marca NUEVA que encuentres (máximo 3 por ejecución), redacta en ESPAÑOL y con tus propias palabras: nombre exacto de la marca y una descripción corta (2-3 frases: qué hacen, qué la hace interesante). Nunca traduzcas ni copies frases literales de la fuente.
+2. Para cada marca NUEVA que encuentres (máximo 3 por ejecución), redacta en ESPAÑOL y con tus propias palabras: nombre exacto de la marca y una descripción corta (2-3 frases: qué hacen, qué la hace interesante). Nunca traduzcas ni copies frases literales de la fuente. Si el texto menciona explícitamente su cuenta de Instagram o el enlace a su tienda online, inclúyelos en "instagram" y "shopUrl"; si no aparecen en el texto, deja esos campos como null (no los inventes).
 3. Para marcas YA CONOCIDAS con novedad real, redacta una frase corta de actualización.
 
 IMPORTANTE: no inventes ningún dato que no esté en el texto de origen. El campo "sourceUrl" debe ser EXACTAMENTE igual a uno de los enlaces de abajo, sin modificarlo. Si no encuentras nada que merezca la pena, devuelve arrays vacíos.
@@ -62,7 +62,7 @@ IMPORTANTE: no inventes ningún dato que no esté en el texto de origen. El camp
 Devuelve EXCLUSIVAMENTE un JSON válido, sin texto adicional, con esta forma exacta:
 
 {
-  "nuevas": [ { "name": "string", "description": "string", "sourceUrl": "string" } ],
+  "nuevas": [ { "name": "string", "description": "string", "sourceUrl": "string", "instagram": "string o null", "shopUrl": "string o null" } ],  
   "actualizaciones": [ { "name": "string (debe coincidir con el nombre de una marca ya seguida)", "note": "string", "sourceUrl": "string" } ]
 }
 
@@ -132,6 +132,8 @@ async function main() {
       name: nueva.name,
       description: nueva.description ?? '',
       sourceUrl: nueva.sourceUrl ?? '',
+      instagram: nueva.instagram || null,
+      shopUrl: nueva.shopUrl || null,
       image: null,
       firstFeatured: todayISO,
       updates: [],
