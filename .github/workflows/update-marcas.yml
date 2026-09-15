@@ -1,0 +1,46 @@
+name: Buscar marcas nuevas
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-marcas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v7
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Buscar marcas nuevas
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/generate-marcas.mjs
+
+      - name: Crear propuesta de cambio (Pull Request)
+        uses: peter-evans/create-pull-request@v8
+        with:
+          commit-message: "Actualizar marcas a seguir"
+          title: "🧵 Marcas nuevas para revisar"
+          body: |
+            Este contenido lo ha generado el robot automático a partir de las Alertas de Google configuradas en `scripts/generate-marcas.mjs`.
+
+            Antes de aceptar (Merge) esta propuesta:
+            1. Revisa cada marca nueva y decide si de verdad merece estar en "Marcas a Seguir".
+            2. Añade la foto: entra en la pestaña "Files changed" de esta propuesta, abre `src/data/marcas.json`, pulsa el lápiz (editar) y busca la línea `"image": null` de la marca nueva. Sustituye `null` por el enlace directo a una foto (entre comillas), por ejemplo `"image": "https://ejemplo.com/foto.jpg"`. La foto puedes sacarla de la web de la marca (enlace en `sourceUrl`) o pedírsela directamente a ellos.
+            3. Guarda ese cambio (commit) en esta misma rama y luego pulsa "Merge" para publicarlo.
+          branch: auto/marcas-semanal
+          delete-branch: true
+          add-paths: src/data/marcas.json
