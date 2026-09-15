@@ -62,6 +62,12 @@ const ordenadas = [...marcas].sort(
               ))}
             </ul>
           )}
+                    {(m.instagram || m.shopUrl) && (
+            <div class="marca-links">
+              {m.instagram && <a href={m.instagram} target="_blank" rel="noopener">Instagram</a>}
+              {m.shopUrl && <a href={m.shopUrl} target="_blank" rel="noopener">Tienda</a>}
+            </div>
+          )}
           {m.sourceUrl && <a class="see-all" href={m.sourceUrl} target="_blank" rel="noopener">Fuente</a>}
         </article>
       ))}
