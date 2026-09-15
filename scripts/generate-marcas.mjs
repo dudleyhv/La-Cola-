@@ -5,8 +5,11 @@ import fs from 'node:fs/promises';
 // (Google Alerts -> crear alerta -> "Mostrar opciones" -> "Enviar por: Feed RSS").
 // Ejemplo: 'https://www.google.com/alerts/feeds/00000000000000000/0000000000000000000'
 const FEEDS = [
-  // 'PEGA_AQUI_TU_FEED_1',
-  // 'PEGA_AQUI_TU_FEED_2',
+  'https://www.google.com/alerts/feeds/04037671322248951292/7304848753806366536',
+  'https://www.google.com/alerts/feeds/04037671322248951292/12832229585823019681',
+  'https://www.google.com/alerts/feeds/04037671322248951292/5692541762590028972',
+  'https://www.google.com/alerts/feeds/04037671322248951292/17722668974674180933',
+  'https://www.google.com/alerts/feeds/04037671322248951292/9375217506019674344',
 ];
 
 const MARCAS_PATH = new URL('../src/data/marcas.json', import.meta.url);
