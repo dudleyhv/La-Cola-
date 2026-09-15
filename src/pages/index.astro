@@ -38,26 +38,19 @@ import news from '../data/news.json';
     <div class="ticket">
       <div class="ticket-eyebrow-row">
         <span class="tag-pill">{hero.tag}</span>
-        <span class="countdown">Cierra en <strong class="num">{hero.countdown}</strong></span>
+        {hero.dateLabel && <span class="countdown">{hero.dateLabel}</span>}
       </div>
       <h1>{hero.title}</h1>
       <p class="meta">{hero.description}</p>
       <div class="price-row">
-        <span class="price">{hero.price}</span>
         <span class="store">{hero.store}</span>
       </div>
       <a class="cta" href={hero.ctaUrl}>{hero.ctaText}</a>
     </div>
     <div class="hero-art">
-      <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20 190 C 60 150, 90 120, 150 110 C 190 103, 210 95, 250 78 C 275 68, 300 66, 330 78 C 355 88, 372 108, 378 132 C 382 150, 372 168, 350 176 L 60 214 C 35 217, 18 208, 20 190 Z" fill="#F4C10F"></path>
-        <path d="M20 190 C 60 150, 90 120, 150 110 C 190 103, 210 95, 250 78 C 275 68, 300 66, 330 78" fill="none" stroke="#17161A" stroke-width="3"></path>
-        <path d="M60 214 L350 176 L372 196 L80 232 Z" fill="#F4F4F1"></path>
-        <circle cx="118" cy="150" r="3" fill="#17161A"></circle>
-        <circle cx="140" cy="140" r="3" fill="#17161A"></circle>
-        <circle cx="162" cy="131" r="3" fill="#17161A"></circle>
-        <circle cx="184" cy="123" r="3" fill="#17161A"></circle>
-      </svg>
+      {hero.image
+        ? <img src={hero.image} alt={hero.title} loading="lazy" />
+        : <span class="media-fallback media-fallback--dark">Sin imagen</span>}
     </div>
   </section>
 
@@ -68,12 +61,18 @@ import news from '../data/news.json';
     </div>
     <div class="cal-row">
       {drops.map((d) => (
-        <div class="cal-card">
+        <a class="cal-card" href={d.url}>
+          <div class="cal-media">
+            {d.image
+              ? <img src={d.image} alt={d.model} loading="lazy" />
+              : <span class="media-fallback">Sin imagen</span>}
+          </div>
           <span class="cal-day">{d.day}</span>
           <span class="cal-date num">{d.date}</span>
           <span class="cal-model">{d.model}</span>
+          {d.stores?.length > 1 && <span class="cal-stores">{d.stores.join(', ')}</span>}
           <div class="cal-foot"><span>{d.time}</span><span>{d.price}</span></div>
-        </div>
+        </a>
       ))}
     </div>
   </section>
@@ -85,6 +84,11 @@ import news from '../data/news.json';
     </div>
     <div class="news-grid">
       <a class="news-feature" href={news.feature.url}>
+        <div class="feature-media">
+          {news.feature.image
+            ? <img src={news.feature.image} alt={news.feature.title} loading="lazy" />
+            : <span class="media-fallback">Sin imagen</span>}
+        </div>
         <span class="topic">{news.feature.topic}</span>
         <h3>{news.feature.title}</h3>
         <p>{news.feature.excerpt}</p>
@@ -92,6 +96,11 @@ import news from '../data/news.json';
       <div class="news-side">
         {news.side.map((n) => (
           <a class="news-card" href={n.url}>
+            <div class="card-media">
+              {n.image
+                ? <img src={n.image} alt={n.title} loading="lazy" />
+                : <span class="media-fallback">Sin imagen</span>}
+            </div>
             <span class="topic">{n.topic}</span>
             <h4>{n.title}</h4>
           </a>
