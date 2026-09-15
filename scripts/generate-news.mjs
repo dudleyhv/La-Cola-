@@ -8,10 +8,31 @@ const FEEDS = [
 
 const NEWS_PATH = new URL('../src/data/news.json', import.meta.url);
 const DROPS_PATH = new URL('../src/data/drops.json', import.meta.url);
+const HERO_PATH = new URL('../src/data/hero.json', import.meta.url);
 const WEEKDAYS_ES = new Intl.DateTimeFormat('es-ES', { weekday: 'long' });
 
+function extractImage(item) {
+  if (item.enclosure?.url) return item.enclosure.url;
+  const media = item.mediaContent;
+  if (media) {
+    const arr = Array.isArray(media) ? media : [media];
+    const found = arr.find((m) => m?.$?.url);
+    if (found) return found.$.url;
+  }
+  const html = item.contentEncoded || item.content || '';
+  const match = html.match(/<img[^>]+src="([^">]+)"/i);
+  return match ? match[1] : null;
+}
+
 async function fetchLatestItems() {
-  const parser = new Parser();
+  const parser = new Parser({
+    customFields: {
+      item: [
+        ['media:content', 'mediaContent', { keepArray: true }],
+        ['content:encoded', 'contentEncoded'],
+      ],
+    },
+  });
   const items = [];
   for (const feedUrl of FEEDS) {
     try {
@@ -23,6 +44,7 @@ async function fetchLatestItems() {
           snippet: (item.contentSnippet ?? '').slice(0, 700),
           source: feed.title ?? new URL(feedUrl).hostname,
           date: item.isoDate ?? item.pubDate ?? '',
+          image: extractImage(item),
         });
       }
     } catch (err) {
@@ -46,14 +68,16 @@ TAREA 1 — Noticias:
 Elige la más relevante como destacada ("feature") y hasta 3 más como secundarias ("side"). Redacta cada titular y resumen en ESPAÑOL, con tus propias palabras — nunca traduzcas ni copies frases literales de la fuente. Menciona de forma natural qué medio lo cuenta.
 
 TAREA 2 — Calendario de lanzamientos:
-Revisa las mismas noticias y busca SOLO las que mencionen una fecha de lanzamiento concreta y futura (posterior a hoy). Por cada una (máximo 5), extrae isoDate (YYYY-MM-DD), model, time (o "Por confirmar" si no se menciona), price (o "Por confirmar" si no se menciona) y url. IMPORTANTE: no inventes ninguna fecha, hora ni precio que no esté explícitamente en el texto. Si un artículo no da fecha concreta, no lo incluyas.
+Revisa las mismas noticias y busca SOLO las que mencionen una fecha de lanzamiento concreta y futura (posterior a hoy). Por cada una (máximo 5), extrae isoDate (YYYY-MM-DD), model, time (o "Por confirmar" si no se menciona), price (o "Por confirmar" si no se menciona), y stores (array con los nombres de las tiendas que el artículo mencione explícitamente). IMPORTANTE: no inventes ninguna fecha, hora, precio ni tienda que no esté explícitamente en el texto. Si un artículo no da fecha concreta, no lo incluyas.
+
+En ambas tareas, el campo "url" de cada elemento debe ser EXACTAMENTE igual a uno de los enlaces que te doy abajo, sin modificarlo.
 
 Devuelve EXCLUSIVAMENTE un JSON válido, sin texto adicional, con esta forma exacta:
 
 {
   "feature": { "topic": "string corta", "title": "string", "excerpt": "string", "url": "string" },
   "side": [ { "topic": "string corta", "title": "string", "url": "string" } ],
-  "drops": [ { "isoDate": "YYYY-MM-DD", "model": "string", "time": "string", "price": "string", "url": "string" } ]
+  "drops": [ { "isoDate": "YYYY-MM-DD", "model": "string", "time": "string", "price": "string", "url": "string", "stores": ["string"] } ]
 }
 
 Noticias de origen:
@@ -90,7 +114,12 @@ async function generateWithClaude(items) {
   return JSON.parse(clean);
 }
 
-function formatDrops(rawDrops) {
+function findImage(url, items) {
+  const match = items.find((it) => it.link === url);
+  return match?.image ?? null;
+}
+
+function formatDrops(rawDrops, items) {
   const today = new Date();
   return rawDrops
     .filter((d) => d.isoDate && new Date(d.isoDate) >= today)
@@ -106,8 +135,39 @@ function formatDrops(rawDrops) {
         model: d.model,
         time: d.time || 'Por confirmar',
         price: d.price || 'Por confirmar',
+        stores: Array.isArray(d.stores) ? d.stores : [],
+        image: findImage(d.url, items),
+        url: d.url,
       };
     });
+}
+
+function buildHero(drops, news) {
+  if (drops.length > 0) {
+    const d = drops[0];
+    const storeLabel = d.stores.length > 0 ? d.stores.join(', ') : 'tienda por confirmar';
+    return {
+      tag: 'Próximo lanzamiento',
+      dateLabel: `${d.day} ${d.date}`,
+      title: d.model,
+      description: `Hora de apertura: ${d.time} · Precio: ${d.price}`,
+      store: `vía ${storeLabel}`,
+      image: d.image,
+      ctaText: 'Leer la noticia completa',
+      ctaUrl: d.url,
+    };
+  }
+  const f = news.feature;
+  return {
+    tag: 'Noticia destacada',
+    dateLabel: '',
+    title: f.title,
+    description: f.excerpt,
+    store: f.topic,
+    image: f.image,
+    ctaText: 'Leer la noticia completa',
+    ctaUrl: f.url,
+  };
 }
 
 async function main() {
@@ -118,21 +178,24 @@ async function main() {
   }
   const result = await generateWithClaude(items);
 
-  await fs.writeFile(
-    NEWS_PATH,
-    JSON.stringify({ feature: result.feature, side: result.side }, null, 2) + '\n'
-  );
+  const news = {
+    feature: { ...result.feature, image: findImage(result.feature.url, items) },
+    side: (Array.isArray(result.side) ? result.side : []).map((n) => ({ ...n, image: findImage(n.url, items) })),
+  };
+  await fs.writeFile(NEWS_PATH, JSON.stringify(news, null, 2) + '\n');
   console.log('src/data/news.json actualizado.');
 
-  if (Array.isArray(result.drops)) {
-    const drops = formatDrops(result.drops);
-    if (drops.length > 0) {
-      await fs.writeFile(DROPS_PATH, JSON.stringify(drops, null, 2) + '\n');
-      console.log('src/data/drops.json actualizado.');
-    } else {
-      console.log('No se han encontrado lanzamientos con fecha confirmada.');
-    }
+  const drops = Array.isArray(result.drops) ? formatDrops(result.drops, items) : [];
+  if (drops.length > 0) {
+    await fs.writeFile(DROPS_PATH, JSON.stringify(drops, null, 2) + '\n');
+    console.log('src/data/drops.json actualizado.');
+  } else {
+    console.log('No se han encontrado lanzamientos con fecha confirmada.');
   }
+
+  const hero = buildHero(drops, news);
+  await fs.writeFile(HERO_PATH, JSON.stringify(hero, null, 2) + '\n');
+  console.log('src/data/hero.json actualizado.');
 }
 
 main().catch((err) => {
