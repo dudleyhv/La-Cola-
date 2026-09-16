@@ -163,19 +163,18 @@ async function generateWithClaude(url, articulo) {
   return JSON.parse(clean);
 }
 
-async function main() {
-  const url = (process.env.INPUT_URL || '').trim();
-  if (!url) {
-    throw new Error('No se ha recibido ninguna URL. Rellena el campo "url" al ejecutar este workflow.');
-  }
+function parseUrls(raw) {
+  return raw
+    .split(/[\n,]+/)
+    .map((u) => u.trim())
+    .filter(Boolean);
+}
 
+async function processUrl(url, archive, existingSlugs, todayISO) {
   console.log(`Descargando y analizando: ${url}`);
   const articulo = await fetchArticle(url);
   const result = await generateWithClaude(url, articulo);
-  const todayISO = new Date().toISOString().slice(0, 10);
 
-  const archive = await loadJson(ARTICULOS_PATH, []);
-  const existingSlugs = new Set(archive.map((a) => a.slug));
   let entry = archive.find((a) => a.sourceUrl === url);
 
   let dateFields = {};
@@ -225,12 +224,7 @@ async function main() {
     });
   }
 
-  await fs.writeFile(ARTICULOS_PATH, JSON.stringify(archive, null, 2) + '\n');
-  console.log('src/data/articulos.json actualizado.');
-
-  const drops = await loadJson(DROPS_PATH, []);
-  const withoutThis = drops.filter((d) => d.slug !== entry.slug);
-  const dropCard = {
+  return {
     day: entry.day,
     date: entry.date,
     model: entry.title,
@@ -241,26 +235,75 @@ async function main() {
     url: entry.sourceUrl,
     slug: entry.slug,
   };
-  const newDrops = [dropCard, ...withoutThis].slice(0, MAX_DROPS);
+}
+
+async function main() {
+  const raw = (process.env.INPUT_URL || '').trim();
+  if (!raw) {
+    throw new Error('No se ha recibido ninguna URL. Rellena el campo "url" al ejecutar este workflow.');
+  }
+  const urls = parseUrls(raw);
+  if (urls.length === 0) {
+    throw new Error('No se ha reconocido ninguna URL válida en el texto recibido.');
+  }
+
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const archive = await loadJson(ARTICULOS_PATH, []);
+  const existingSlugs = new Set(archive.map((a) => a.slug));
+
+  const dropCards = [];
+  const errores = [];
+
+  for (const url of urls) {
+    try {
+      const dropCard = await processUrl(url, archive, existingSlugs, todayISO);
+      dropCards.push(dropCard);
+    } catch (err) {
+      console.error(err.message || err);
+      errores.push({ url, mensaje: err.message || String(err) });
+    }
+  }
+
+  if (dropCards.length === 0) {
+    throw new Error(
+      `No se ha podido procesar ninguna de las ${urls.length} URL(s) recibidas:\n` +
+        errores.map((e) => `- ${e.url}: ${e.mensaje}`).join('\n')
+    );
+  }
+
+  await fs.writeFile(ARTICULOS_PATH, JSON.stringify(archive, null, 2) + '\n');
+  console.log('src/data/articulos.json actualizado.');
+
+  const drops = await loadJson(DROPS_PATH, []);
+  const nuevosSlugs = new Set(dropCards.map((d) => d.slug));
+  const withoutThese = drops.filter((d) => !nuevosSlugs.has(d.slug));
+  const newDrops = [...dropCards, ...withoutThese].slice(0, MAX_DROPS);
   await fs.writeFile(DROPS_PATH, JSON.stringify(newDrops, null, 2) + '\n');
   console.log('src/data/drops.json actualizado.');
 
   const news = await loadJson(NEWS_PATH, null);
-  const storeLabel = dropCard.stores?.length > 0 ? dropCard.stores.join(', ') : 'tienda por confirmar';
+  const heroCard = dropCards[0];
+  const storeLabel = heroCard.stores?.length > 0 ? heroCard.stores.join(', ') : 'tienda por confirmar';
   const hero = {
     tag: 'Lanzamiento destacado',
-    dateLabel: dropCard.day && dropCard.date !== 'Próximamente' ? `${dropCard.day} ${dropCard.date}` : '',
-    title: dropCard.model,
-    description: `Hora de apertura: ${dropCard.time} · Precio: ${dropCard.price}`,
+    dateLabel: heroCard.day && heroCard.date !== 'Próximamente' ? `${heroCard.day} ${heroCard.date}` : '',
+    title: heroCard.model,
+    description: `Hora de apertura: ${heroCard.time} · Precio: ${heroCard.price}`,
     store: `vía ${storeLabel}`,
-    image: dropCard.image,
+    image: heroCard.image,
     ctaText: 'Leer la noticia completa',
-    ctaUrl: dropCard.url,
-    slug: dropCard.slug,
+    ctaUrl: heroCard.url,
+    slug: heroCard.slug,
   };
   await fs.writeFile(HERO_PATH, JSON.stringify(hero, null, 2) + '\n');
-  console.log('src/data/hero.json actualizado (este lanzamiento pasa a ser el destacado de portada).');
+  console.log('src/data/hero.json actualizado (el primer lanzamiento de la lista pasa a ser el destacado de portada).');
   void news;
+
+  console.log(`\nProcesados correctamente: ${dropCards.length} de ${urls.length}.`);
+  if (errores.length > 0) {
+    console.log('Con errores (no se han añadido):');
+    for (const e of errores) console.log(`- ${e.url}: ${e.mensaje}`);
+  }
 }
 
 main().catch((err) => {
