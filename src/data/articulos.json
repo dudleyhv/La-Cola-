@@ -63,6 +63,29 @@
     "date": "01.10",
     "time": "Por confirmar",
     "price": "Por confirmar",
-    "stores": ["SNKRS"]
+    "stores": [
+      "SNKRS"
+    ]
+  },
+  {
+    "slug": "telfar-x-timberland-fall-2026",
+    "type": "lanzamiento",
+    "topic": "Colaboraciones",
+    "title": "Telfar x Timberland Fall 2026",
+    "excerpt": "La esperada colaboración entre Telfar y Timberland regresa con una reposición de sus botas y loafers. Los modelos en color Wheat ya están agotados en preventa.",
+    "body": "La colaboración entre Telfar y Timberland ha vuelto con una nueva reposición que ya está generando auténtica fiebre entre los aficionados. Tras el éxito de la colección de otoño de 2025, esta segunda oportunidad permite a quienes se quedaron sin stock acceder a unos diseños que combinan la versatilidad de las botas Timberland Premium con la estética característica de Telfar.\n\nLa colección incluye tres modelos principales. El mid pull-on boot de 11 pulgadas permite ser doblado para mostrar el branding interior de Telfar, mientras que el tall pull-on boot destaca por su construcción desmesurada de 26 pulgadas que ofrece múltiples opciones de estilismo. Completa la oferta un loafer slip-on que mantiene la esencia robusta de las botas de trabajo pero en una versión más casual. Todos están disponibles en los clásicos colores Wheat y Black, con precios que van desde los 225 euros del loafer hasta los 600 euros de la bota tall.\n\nLa respuesta ha sido inmediata: los modelos en color Wheat ya se han agotado en preventa a través de telfar.net. Como incentivo adicional, quienes hagan pedido anticipado reciben un 50% de descuento en la línea de bolsos de la colaboración. Una distribución más amplia está programada para el 18 de septiembre, incluyendo el lanzamiento en timberland.com.",
+    "image": "https://wwd.com/wp-content/uploads/2026/08/telfar-timberland-2026-2.jpg?w=1000&#038;h=563&#038;crop=1",
+    "sourceUrl": "https://wwd.com/footwear-news/sneaker-news/telfar-timberland-boots-2026-restock-1239168255/",
+    "sourceName": "wwd.com",
+    "publishedAt": "2026-09-16",
+    "isoDate": "2026-09-18",
+    "day": "Viernes",
+    "date": "18.09",
+    "time": "Por confirmar",
+    "price": "225€ - 600€",
+    "stores": [
+      "telfar.net",
+      "timberland.com"
+    ]
   }
 ]
