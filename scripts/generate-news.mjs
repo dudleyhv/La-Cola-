@@ -9,6 +9,7 @@ const FEEDS = [
 const NEWS_PATH = new URL('../src/data/news.json', import.meta.url);
 const DROPS_PATH = new URL('../src/data/drops.json', import.meta.url);
 const HERO_PATH = new URL('../src/data/hero.json', import.meta.url);
+const ARTICULOS_PATH = new URL('../src/data/articulos.json', import.meta.url);
 const WEEKDAYS_ES = new Intl.DateTimeFormat('es-ES', { weekday: 'long' });
 
 function extractImage(item) {
@@ -60,24 +61,26 @@ function buildPrompt(items, todayISO) {
     .map((it, i) => `${i + 1}. [${it.source}] ${it.title}\n${it.snippet}\nEnlace: ${it.link}`)
     .join('\n\n');
 
-  return `Eres el redactor de "La Cola", una web española de noticias sobre sneakers y streetwear. Hoy es ${todayISO}.
+  return `Eres el redactor de "Apolo Radar", una web española de noticias sobre sneakers y streetwear. Hoy es ${todayISO}.
 
 Te paso ${items.length} noticias reales recogidas hoy de varias fuentes en inglés. Tienes dos tareas:
 
 TAREA 1 — Noticias:
-Elige la más relevante como destacada ("feature") y hasta 3 más como secundarias ("side"). Redacta cada titular y resumen en ESPAÑOL, con tus propias palabras — nunca traduzcas ni copies frases literales de la fuente. Menciona de forma natural qué medio lo cuenta.
+Elige la más relevante como destacada ("feature") y hasta 3 más como secundarias ("side"). Para cada una, redacta en ESPAÑOL y con tus propias palabras (nunca traduzcas ni copies frases literales de la fuente):
+- "excerpt": un resumen corto de 1-2 frases, para mostrar en las tarjetas de la portada.
+- "body": el texto completo de la página individual de la noticia, con 2 párrafos separados por un salto de línea doble. Debe desarrollar el contexto (qué se sabe, qué falta por confirmar) y mencionar de forma natural qué medio lo cuenta, sin inventar datos que no estén en el texto de origen.
 
 TAREA 2 — Calendario de lanzamientos:
-Revisa las mismas noticias y busca SOLO las que mencionen una fecha de lanzamiento concreta y futura (posterior a hoy). Por cada una (máximo 5), extrae isoDate (YYYY-MM-DD), model, time (o "Por confirmar" si no se menciona), price (o "Por confirmar" si no se menciona), y stores (array con los nombres de las tiendas que el artículo mencione explícitamente). IMPORTANTE: no inventes ninguna fecha, hora, precio ni tienda que no esté explícitamente en el texto. Si un artículo no da fecha concreta, no lo incluyas.
+Revisa las mismas noticias y busca SOLO las que mencionen una fecha de lanzamiento concreta y futura (posterior a hoy). Por cada una (máximo 5), extrae isoDate (YYYY-MM-DD), model, time (o "Por confirmar" si no se menciona), price (o "Por confirmar" si no se menciona), stores (array con los nombres de las tiendas que el artículo mencione explícitamente), y "body" (1-2 párrafos en español describiendo el lanzamiento con el mismo criterio que en la tarea 1). IMPORTANTE: no inventes ninguna fecha, hora, precio ni tienda que no esté explícitamente en el texto. Si un artículo no da fecha concreta, no lo incluyas.
 
 En ambas tareas, el campo "url" de cada elemento debe ser EXACTAMENTE igual a uno de los enlaces que te doy abajo, sin modificarlo.
 
 Devuelve EXCLUSIVAMENTE un JSON válido, sin texto adicional, con esta forma exacta:
 
 {
-  "feature": { "topic": "string corta", "title": "string", "excerpt": "string", "url": "string" },
-  "side": [ { "topic": "string corta", "title": "string", "url": "string" } ],
-  "drops": [ { "isoDate": "YYYY-MM-DD", "model": "string", "time": "string", "price": "string", "url": "string", "stores": ["string"] } ]
+  "feature": { "topic": "string corta", "title": "string", "excerpt": "string", "body": "string", "url": "string" },
+  "side": [ { "topic": "string corta", "title": "string", "excerpt": "string", "body": "string", "url": "string" } ],
+  "drops": [ { "isoDate": "YYYY-MM-DD", "model": "string", "time": "string", "price": "string", "url": "string", "stores": ["string"], "body": "string" } ]
 }
 
 Noticias de origen:
@@ -99,7 +102,7 @@ async function generateWithClaude(items) {
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1800,
+      max_tokens: 3000,
       messages: [{ role: 'user', content: buildPrompt(items, todayISO) }],
     }),
   });
@@ -114,9 +117,48 @@ async function generateWithClaude(items) {
   return JSON.parse(clean);
 }
 
+function findItem(url, items) {
+  return items.find((it) => it.link === url);
+}
+
 function findImage(url, items) {
-  const match = items.find((it) => it.link === url);
-  return match?.image ?? null;
+  return findItem(url, items)?.image ?? null;
+}
+
+function sourceNameFor(url, items) {
+  return findItem(url, items)?.source ?? new URL(url).hostname;
+}
+
+function slugify(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
+function uniqueSlug(base, existingSlugs) {
+  let slug = base;
+  let i = 2;
+  while (existingSlugs.has(slug)) {
+    slug = `${base}-${i}`;
+    i += 1;
+  }
+  existingSlugs.add(slug);
+  return slug;
+}
+
+async function loadArchive() {
+  try {
+    const raw = await fs.readFile(ARTICULOS_PATH, 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
 }
 
 function formatDrops(rawDrops, items) {
@@ -138,6 +180,8 @@ function formatDrops(rawDrops, items) {
         stores: Array.isArray(d.stores) ? d.stores : [],
         image: findImage(d.url, items),
         url: d.url,
+        body: d.body || '',
+        isoDate: d.isoDate,
       };
     });
 }
@@ -155,6 +199,7 @@ function buildHero(drops, news) {
       image: d.image,
       ctaText: 'Leer la noticia completa',
       ctaUrl: d.url,
+      slug: d.slug,
     };
   }
   const f = news.feature;
@@ -167,6 +212,7 @@ function buildHero(drops, news) {
     image: f.image,
     ctaText: 'Leer la noticia completa',
     ctaUrl: f.url,
+    slug: f.slug,
   };
 }
 
@@ -177,25 +223,107 @@ async function main() {
     return;
   }
   const result = await generateWithClaude(items);
+  const todayISO = new Date().toISOString().slice(0, 10);
+
+  const archive = await loadArchive();
+  const existingUrls = new Set(archive.map((a) => a.sourceUrl));
+  const existingSlugs = new Set(archive.map((a) => a.slug));
+  const newArticles = [];
+
+  function registerArticle({ type, topic, title, excerpt, body, url, image, extra = {} }) {
+    let article = archive.find((a) => a.sourceUrl === url);
+    if (!article) {
+      const slug = uniqueSlug(slugify(title), existingSlugs);
+      article = {
+        slug,
+        type,
+        topic,
+        title,
+        excerpt,
+        body: body || excerpt,
+        image,
+        sourceUrl: url,
+        sourceName: sourceNameFor(url, items),
+        publishedAt: todayISO,
+        ...extra,
+      };
+      archive.push(article);
+      newArticles.push(article);
+      existingUrls.add(url);
+    }
+    return article;
+  }
+
+  const featureImage = findImage(result.feature.url, items);
+  const featureArticle = registerArticle({
+    type: 'noticia',
+    topic: result.feature.topic,
+    title: result.feature.title,
+    excerpt: result.feature.excerpt,
+    body: result.feature.body,
+    url: result.feature.url,
+    image: featureImage,
+  });
+
+  const sideResults = Array.isArray(result.side) ? result.side : [];
+  const sideArticles = sideResults.map((n) =>
+    registerArticle({
+      type: 'noticia',
+      topic: n.topic,
+      title: n.title,
+      excerpt: n.excerpt,
+      body: n.body,
+      url: n.url,
+      image: findImage(n.url, items),
+    })
+  );
 
   const news = {
-    feature: { ...result.feature, image: findImage(result.feature.url, items) },
-    side: (Array.isArray(result.side) ? result.side : []).map((n) => ({ ...n, image: findImage(n.url, items) })),
+    feature: { ...result.feature, image: featureImage, slug: featureArticle.slug },
+    side: sideResults.map((n, i) => ({ ...n, image: findImage(n.url, items), slug: sideArticles[i].slug })),
   };
   await fs.writeFile(NEWS_PATH, JSON.stringify(news, null, 2) + '\n');
   console.log('src/data/news.json actualizado.');
 
   const drops = Array.isArray(result.drops) ? formatDrops(result.drops, items) : [];
-  if (drops.length > 0) {
-    await fs.writeFile(DROPS_PATH, JSON.stringify(drops, null, 2) + '\n');
+  const dropsWithSlug = drops.map((d) => {
+    const article = registerArticle({
+      type: 'lanzamiento',
+      topic: 'Lanzamiento',
+      title: d.model,
+      excerpt: `${d.model} llega el ${d.day} ${d.date}.`,
+      body: d.body,
+      url: d.url,
+      image: d.image,
+      extra: {
+        isoDate: d.isoDate,
+        day: d.day,
+        date: d.date,
+        time: d.time,
+        price: d.price,
+        stores: d.stores,
+      },
+    });
+    return { ...d, slug: article.slug };
+  });
+
+  if (dropsWithSlug.length > 0) {
+    await fs.writeFile(DROPS_PATH, JSON.stringify(dropsWithSlug, null, 2) + '\n');
     console.log('src/data/drops.json actualizado.');
   } else {
     console.log('No se han encontrado lanzamientos con fecha confirmada.');
   }
 
-  const hero = buildHero(drops, news);
+  const hero = buildHero(dropsWithSlug, news);
   await fs.writeFile(HERO_PATH, JSON.stringify(hero, null, 2) + '\n');
   console.log('src/data/hero.json actualizado.');
+
+  if (newArticles.length > 0) {
+    await fs.writeFile(ARTICULOS_PATH, JSON.stringify(archive, null, 2) + '\n');
+    console.log(`src/data/articulos.json actualizado (${newArticles.length} artículo(s) nuevo(s)).`);
+  } else {
+    console.log('No hay artículos nuevos que añadir a la hemeroteca.');
+  }
 }
 
 main().catch((err) => {

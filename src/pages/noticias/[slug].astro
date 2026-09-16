@@ -1,0 +1,90 @@
+---
+import '../../styles/global.css';
+import articulos from '../../data/articulos.json';
+
+export function getStaticPaths() {
+  return articulos.map((articulo) => ({
+    params: { slug: articulo.slug },
+    props: { articulo },
+  }));
+}
+
+const { articulo } = Astro.props;
+const parrafos = (articulo.body || articulo.excerpt || '').split('\n\n').filter(Boolean);
+const esLanzamiento = articulo.type === 'lanzamiento';
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{articulo.title} — Apolo Radar</title>
+  <meta name="description" content={articulo.excerpt} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="/">Apolo <span>Radar</span></a>
+    <nav>
+      <a href="/#lanzamientos">Lanzamientos</a>
+      <a href="/#noticias">Noticias</a>
+      <a href="/marcas-a-seguir">Marcas a Seguir</a>
+    </nav>
+    <a class="btn-subscribe" href="/#newsletter">Suscríbete</a>
+  </div>
+</header>
+
+<main class="wrap article-main">
+
+  <a class="article-back" href="/noticias">&larr; Volver a todas las noticias</a>
+
+  <span class="article-topic">{articulo.topic}</span>
+  <h1 class="article-title">{articulo.title}</h1>
+
+  {esLanzamiento && (
+    <div class="article-meta-row">
+      <span class="num">{articulo.day} {articulo.date}</span>
+      <span>{articulo.time}</span>
+      <span>{articulo.price}</span>
+      {articulo.stores?.length > 0 && <span>{articulo.stores.join(', ')}</span>}
+    </div>
+  )}
+
+  <div class="article-media">
+    {articulo.image
+      ? <img src={articulo.image} alt={articulo.title} loading="lazy" />
+      : <span class="media-fallback">Sin imagen</span>}
+  </div>
+
+  <div class="article-body">
+    {parrafos.map((p) => <p>{p}</p>)}
+  </div>
+
+  {articulo.sourceUrl && (
+    <p class="article-source">
+      Noticia original en <a href={articulo.sourceUrl} target="_blank" rel="noopener">{articulo.sourceName || 'la fuente original'}</a>.
+    </p>
+  )}
+
+  <div class="comments-placeholder" id="comentarios">
+    Los comentarios llegarán pronto a esta página.
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>© 2026 Apolo Radar</span>
+    <span>Aviso de afiliados · Contacto · Envía un drop</span>
+  </div>
+</footer>
+
+</body>
+</html>
