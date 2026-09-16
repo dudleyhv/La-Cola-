@@ -148,6 +148,8 @@ section.block{margin:64px 0;}
 .article-source a{font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);}
 .article-source a:hover{border-color:var(--ink);}
 .comments-placeholder{margin:40px 0 64px;padding:22px 24px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-tag);color:var(--muted);font-size:14px;}
+.comments-block{margin:40px 0 64px;padding-top:32px;border-top:1px solid var(--line);}
+.comments-title{font-size:20px;margin-bottom:20px;}
 
 /* ---------- Newsletter ---------- */
 .newsletter{background:var(--ink);color:var(--paper);border-radius:var(--radius-tag);padding:44px;display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:center;}
