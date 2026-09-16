@@ -46,7 +46,7 @@ function buildPrompt(items, existingBrands, todayISO) {
     .join('\n\n');
   const conocidas = existingBrands.map((b) => b.name).join(', ') || 'ninguna todavía';
 
-  return `Eres el redactor de "La Cola", una web española de streetwear. Hoy es ${todayISO}.
+  return Eres el redactor de "Apolo Radar", una web española de noticias sobre sneakers y streetwear. Hoy es ${todayISO}.
 
 Te paso ${items.length} resultados reales de alertas de búsqueda sobre marcas de ropa/streetwear nuevas o emergentes.
 
