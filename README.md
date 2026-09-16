@@ -1,5 +1,4 @@
-# La Cola
-
+# Apolo Radar
 Web de noticias y lanzamientos de sneakers/streetwear, construida con [Astro](https://astro.build).
 Sitio 100% estático: genera HTML en el `build` y no necesita servidor propio.
 
