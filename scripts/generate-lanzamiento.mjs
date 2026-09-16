@@ -82,9 +82,19 @@ async function fetchArticle(url) {
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
       accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       'accept-language': 'es-ES,es;q=0.9,en;q=0.8',
+      referer: 'https://www.google.com/',
+      'upgrade-insecure-requests': '1',
+      'sec-fetch-mode': 'navigate',
+      'sec-fetch-site': 'cross-site',
+      'sec-fetch-dest': 'document',
     },
   });
   if (!response.ok) {
+    if (response.status === 403) {
+      throw new Error(
+        `No se pudo descargar ${url}: HTTP 403. Esta web bloquea las peticiones automáticas (algo habitual en tiendas oficiales como Nike, Timberland, Zara, etc.). Prueba a pegar en su lugar el enlace a un ARTÍCULO que hable de este lanzamiento (por ejemplo de Hypebeast, Highsnobiety, Sneaker News o similar) en vez del enlace a la ficha de producto de la tienda.`
+      );
+    }
     throw new Error(`No se pudo descargar ${url}: HTTP ${response.status}`);
   }
   const html = await response.text();
