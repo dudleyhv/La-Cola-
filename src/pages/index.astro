@@ -22,10 +22,11 @@ import news from '../data/news.json';
 
 <header class="site-header">
   <div class="wrap header-inner">
-<a class="wordmark" href="/">Apolo <span>Radar</span></a>    <nav>
+    <a class="wordmark" href="/">Apolo <span>Radar</span></a>
+    <nav>
       <a href="#lanzamientos">Lanzamientos</a>
       <a href="#noticias">Noticias</a>
-                  <a href="/marcas-a-seguir">Marcas a Seguir</a>
+      <a href="/marcas-a-seguir">Marcas a Seguir</a>
     </nav>
     <a class="btn-subscribe" href="#newsletter">Suscríbete</a>
   </div>
@@ -44,7 +45,7 @@ import news from '../data/news.json';
       <div class="price-row">
         <span class="store">{hero.store}</span>
       </div>
-      <a class="cta" href={hero.ctaUrl}>{hero.ctaText}</a>
+      <a class="cta" href={hero.slug ? `/noticias/${hero.slug}` : hero.ctaUrl}>{hero.ctaText}</a>
     </div>
     <div class="hero-art">
       {hero.image
@@ -56,11 +57,11 @@ import news from '../data/news.json';
   <section class="block" id="lanzamientos">
     <div class="block-head">
       <h2>Calendario de lanzamientos</h2>
-      <a class="see-all" href="#">Ver todos</a>
+      <a class="see-all" href="/noticias">Ver todos</a>
     </div>
     <div class="cal-row">
       {drops.map((d) => (
-        <a class="cal-card" href={d.url}>
+        <a class="cal-card" href={d.slug ? `/noticias/${d.slug}` : d.url}>
           <div class="cal-media">
             {d.image
               ? <img src={d.image} alt={d.model} loading="lazy" />
@@ -79,10 +80,10 @@ import news from '../data/news.json';
   <section class="block" id="noticias">
     <div class="block-head">
       <h2>Noticias</h2>
-      <a class="see-all" href="#">Ver todas</a>
+      <a class="see-all" href="/noticias">Ver todas</a>
     </div>
     <div class="news-grid">
-      <a class="news-feature" href={news.feature.url}>
+      <a class="news-feature" href={news.feature.slug ? `/noticias/${news.feature.slug}` : news.feature.url}>
         <div class="feature-media">
           {news.feature.image
             ? <img src={news.feature.image} alt={news.feature.title} loading="lazy" />
@@ -94,7 +95,7 @@ import news from '../data/news.json';
       </a>
       <div class="news-side">
         {news.side.map((n) => (
-          <a class="news-card" href={n.url}>
+          <a class="news-card" href={n.slug ? `/noticias/${n.slug}` : n.url}>
             <div class="card-media">
               {n.image
                 ? <img src={n.image} alt={n.title} loading="lazy" />
