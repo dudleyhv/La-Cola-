@@ -130,6 +130,7 @@ section.block{margin:64px 0;}
 .marca-updates .num{color:var(--ink);}
 .marca-card .see-all{font-size:12px;margin-top:auto;color:var(--muted);border-bottom:1px solid var(--line);width:fit-content;padding-bottom:1px;}
 .marca-card .see-all:hover{color:var(--ink);border-color:var(--ink);}
+.tag-chip{font-size:11px;font-weight:600;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-tag);padding:3px 8px;text-transform:lowercase;display:inline-block;}
 .marca-links{display:flex;gap:8px;flex-wrap:wrap;}
 .marca-links a{font-size:12px;font-weight:600;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-tag);padding:6px 10px;}
 .marca-links a:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);}
