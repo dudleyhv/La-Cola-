@@ -1,0 +1,48 @@
+name: Publicar lanzamiento destacado
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Enlace a la noticia/artículo del lanzamiento que quieres destacar'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-lanzamiento:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v7
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Generar la ficha del lanzamiento
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          INPUT_URL: ${{ inputs.url }}
+        run: node scripts/generate-lanzamiento.mjs
+
+      - name: Crear propuesta de cambio (Pull Request)
+        uses: peter-evans/create-pull-request@v8
+        with:
+          commit-message: "Publicar lanzamiento destacado"
+          title: "🚀 Lanzamiento destacado para revisar"
+          body: |
+            Este lanzamiento se ha generado a partir de la URL que pegaste al ejecutar el workflow:
+            ${{ inputs.url }}
+
+            Revisa el texto en `src/data/articulos.json` (el elemento nuevo, al final del archivo) y en `src/data/drops.json`. Si te convence, acepta esta propuesta (Merge) para publicarlo; pasará a ser el destacado de portada.
+          branch: auto/lanzamiento-manual
+          delete-branch: true
+          add-paths: src/data/*.json

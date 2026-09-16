@@ -10,7 +10,6 @@ const NEWS_PATH = new URL('../src/data/news.json', import.meta.url);
 const DROPS_PATH = new URL('../src/data/drops.json', import.meta.url);
 const HERO_PATH = new URL('../src/data/hero.json', import.meta.url);
 const ARTICULOS_PATH = new URL('../src/data/articulos.json', import.meta.url);
-const WEEKDAYS_ES = new Intl.DateTimeFormat('es-ES', { weekday: 'long' });
 
 function extractImage(item) {
   if (item.enclosure?.url) return item.enclosure.url;
@@ -63,24 +62,17 @@ function buildPrompt(items, todayISO) {
 
   return `Eres el redactor de "Apolo Radar", una web española de noticias sobre sneakers y streetwear. Hoy es ${todayISO}.
 
-Te paso ${items.length} noticias reales recogidas hoy de varias fuentes en inglés. Tienes dos tareas:
-
-TAREA 1 — Noticias:
-Elige la más relevante como destacada ("feature") y hasta 3 más como secundarias ("side"). Para cada una, redacta en ESPAÑOL y con tus propias palabras (nunca traduzcas ni copies frases literales de la fuente):
+Te paso ${items.length} noticias reales recogidas hoy de varias fuentes en inglés. Elige la más relevante como destacada ("feature") y hasta 3 más como secundarias ("side"). Para cada una, redacta en ESPAÑOL y con tus propias palabras (nunca traduzcas ni copies frases literales de la fuente):
 - "excerpt": un resumen corto de 1-2 frases, para mostrar en las tarjetas de la portada.
 - "body": el texto completo de la página individual de la noticia, con 2 párrafos separados por un salto de línea doble. Debe desarrollar el contexto (qué se sabe, qué falta por confirmar) y mencionar de forma natural qué medio lo cuenta, sin inventar datos que no estén en el texto de origen.
 
-TAREA 2 — Calendario de lanzamientos:
-Revisa las mismas noticias y busca SOLO las que mencionen una fecha de lanzamiento concreta y futura (posterior a hoy). Por cada una (máximo 5), extrae isoDate (YYYY-MM-DD), model, time (o "Por confirmar" si no se menciona), price (o "Por confirmar" si no se menciona), stores (array con los nombres de las tiendas que el artículo mencione explícitamente), y "body" (1-2 párrafos en español describiendo el lanzamiento con el mismo criterio que en la tarea 1). IMPORTANTE: no inventes ninguna fecha, hora, precio ni tienda que no esté explícitamente en el texto. Si un artículo no da fecha concreta, no lo incluyas.
-
-En ambas tareas, el campo "url" de cada elemento debe ser EXACTAMENTE igual a uno de los enlaces que te doy abajo, sin modificarlo.
+El campo "url" de cada elemento debe ser EXACTAMENTE igual a uno de los enlaces que te doy abajo, sin modificarlo.
 
 Devuelve EXCLUSIVAMENTE un JSON válido, sin texto adicional, con esta forma exacta:
 
 {
   "feature": { "topic": "string corta", "title": "string", "excerpt": "string", "body": "string", "url": "string" },
-  "side": [ { "topic": "string corta", "title": "string", "excerpt": "string", "body": "string", "url": "string" } ],
-  "drops": [ { "isoDate": "YYYY-MM-DD", "model": "string", "time": "string", "price": "string", "url": "string", "stores": ["string"], "body": "string" } ]
+  "side": [ { "topic": "string corta", "title": "string", "excerpt": "string", "body": "string", "url": "string" } ]
 }
 
 Noticias de origen:
@@ -102,7 +94,7 @@ async function generateWithClaude(items) {
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 3000,
+      max_tokens: 2600,
       messages: [{ role: 'user', content: buildPrompt(items, todayISO) }],
     }),
   });
@@ -152,49 +144,24 @@ function uniqueSlug(base, existingSlugs) {
   return slug;
 }
 
-async function loadArchive() {
+async function loadJson(path, fallback) {
   try {
-    const raw = await fs.readFile(ARTICULOS_PATH, 'utf-8');
+    const raw = await fs.readFile(path, 'utf-8');
     return JSON.parse(raw);
   } catch {
-    return [];
+    return fallback;
   }
-}
-
-function formatDrops(rawDrops, items) {
-  const today = new Date();
-  return rawDrops
-    .filter((d) => d.isoDate && new Date(d.isoDate) >= today)
-    .sort((a, b) => new Date(a.isoDate) - new Date(b.isoDate))
-    .slice(0, 5)
-    .map((d) => {
-      const dateObj = new Date(d.isoDate + 'T00:00:00');
-      const day = WEEKDAYS_ES.format(dateObj);
-      const [, month, dayNum] = d.isoDate.split('-');
-      return {
-        day: day.charAt(0).toUpperCase() + day.slice(1),
-        date: `${dayNum}.${month}`,
-        model: d.model,
-        time: d.time || 'Por confirmar',
-        price: d.price || 'Por confirmar',
-        stores: Array.isArray(d.stores) ? d.stores : [],
-        image: findImage(d.url, items),
-        url: d.url,
-        body: d.body || '',
-        isoDate: d.isoDate,
-      };
-    });
 }
 
 function buildHero(drops, news) {
   if (drops.length > 0) {
     const d = drops[0];
-    const storeLabel = d.stores.length > 0 ? d.stores.join(', ') : 'tienda por confirmar';
+    const storeLabel = d.stores?.length > 0 ? d.stores.join(', ') : 'tienda por confirmar';
     return {
-      tag: 'Próximo lanzamiento',
-      dateLabel: `${d.day} ${d.date}`,
+      tag: 'Lanzamiento destacado',
+      dateLabel: d.day && d.date ? `${d.day} ${d.date}` : '',
       title: d.model,
-      description: `Hora de apertura: ${d.time} · Precio: ${d.price}`,
+      description: `Hora de apertura: ${d.time || 'Por confirmar'} · Precio: ${d.price || 'Por confirmar'}`,
       store: `vía ${storeLabel}`,
       image: d.image,
       ctaText: 'Leer la noticia completa',
@@ -225,12 +192,11 @@ async function main() {
   const result = await generateWithClaude(items);
   const todayISO = new Date().toISOString().slice(0, 10);
 
-  const archive = await loadArchive();
-  const existingUrls = new Set(archive.map((a) => a.sourceUrl));
+  const archive = await loadJson(ARTICULOS_PATH, []);
   const existingSlugs = new Set(archive.map((a) => a.slug));
   const newArticles = [];
 
-  function registerArticle({ type, topic, title, excerpt, body, url, image, extra = {} }) {
+  function registerArticle({ type, topic, title, excerpt, body, url, image }) {
     let article = archive.find((a) => a.sourceUrl === url);
     if (!article) {
       const slug = uniqueSlug(slugify(title), existingSlugs);
@@ -245,11 +211,9 @@ async function main() {
         sourceUrl: url,
         sourceName: sourceNameFor(url, items),
         publishedAt: todayISO,
-        ...extra,
       };
       archive.push(article);
       newArticles.push(article);
-      existingUrls.add(url);
     }
     return article;
   }
@@ -285,36 +249,11 @@ async function main() {
   await fs.writeFile(NEWS_PATH, JSON.stringify(news, null, 2) + '\n');
   console.log('src/data/news.json actualizado.');
 
-  const drops = Array.isArray(result.drops) ? formatDrops(result.drops, items) : [];
-  const dropsWithSlug = drops.map((d) => {
-    const article = registerArticle({
-      type: 'lanzamiento',
-      topic: 'Lanzamiento',
-      title: d.model,
-      excerpt: `${d.model} llega el ${d.day} ${d.date}.`,
-      body: d.body,
-      url: d.url,
-      image: d.image,
-      extra: {
-        isoDate: d.isoDate,
-        day: d.day,
-        date: d.date,
-        time: d.time,
-        price: d.price,
-        stores: d.stores,
-      },
-    });
-    return { ...d, slug: article.slug };
-  });
-
-  if (dropsWithSlug.length > 0) {
-    await fs.writeFile(DROPS_PATH, JSON.stringify(dropsWithSlug, null, 2) + '\n');
-    console.log('src/data/drops.json actualizado.');
-  } else {
-    console.log('No se han encontrado lanzamientos con fecha confirmada.');
-  }
-
-  const hero = buildHero(dropsWithSlug, news);
+  // "Lanzamientos" (calendario) ya no se genera aquí de forma automática:
+  // se gestiona a mano con scripts/generate-lanzamiento.mjs. Aquí solo lo leemos
+  // para decidir qué aparece en el hero de portada.
+  const drops = await loadJson(DROPS_PATH, []);
+  const hero = buildHero(drops, news);
   await fs.writeFile(HERO_PATH, JSON.stringify(hero, null, 2) + '\n');
   console.log('src/data/hero.json actualizado.');
 
