@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        description: 'Enlace a la noticia/artículo del lanzamiento que quieres destacar'
+        description: 'Enlace(s) al artículo del/de los lanzamiento(s). Para varios, sepáralos con comas'
         required: true
         type: string
 
@@ -36,13 +36,13 @@ jobs:
       - name: Crear propuesta de cambio (Pull Request)
         uses: peter-evans/create-pull-request@v8
         with:
-          commit-message: "Publicar lanzamiento destacado"
-          title: "🚀 Lanzamiento destacado para revisar"
+          commit-message: "Publicar lanzamiento(s) destacado(s)"
+          title: "🚀 Lanzamiento(s) destacado(s) para revisar"
           body: |
-            Este lanzamiento se ha generado a partir de la URL que pegaste al ejecutar el workflow:
+            Estos lanzamientos se han generado a partir de las URL que pegaste al ejecutar el workflow:
             ${{ inputs.url }}
 
-            Revisa el texto en `src/data/articulos.json` (el elemento nuevo, al final del archivo) y en `src/data/drops.json`. Si te convence, acepta esta propuesta (Merge) para publicarlo; pasará a ser el destacado de portada.
+            Revisa el texto en `src/data/articulos.json` (los elementos nuevos, al final del archivo) y en `src/data/drops.json`. El primer enlace de la lista pasa a ser el destacado de portada. Si te convence, acepta esta propuesta (Merge) para publicarlo. Si alguna URL ha fallado (por ejemplo por bloqueo de la web de origen), aparecerá en el registro ("Actions" → esta ejecución → paso "Generar la ficha del lanzamiento") pero no habrá impedido que se procesen las demás.
           branch: auto/lanzamiento-manual
           delete-branch: true
           add-paths: src/data/*.json
