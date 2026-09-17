@@ -1,5 +1,40 @@
 [
   {
+    "day": "",
+    "date": "Próximamente",
+    "model": "Nike Air Max Goadome Low x Taller de Rafa",
+    "time": "Por confirmar",
+    "price": "Por confirmar",
+    "stores": [],
+    "image": null,
+    "url": "https://hypebeast.com/2026/9/taller-de-rafa-nike-air-max-goadome-low-iu4876-200-release-info",
+    "slug": "nike-air-max-goadome-low-x-taller-de-rafa"
+  },
+  {
+    "day": "Jueves",
+    "date": "10.09",
+    "model": "Salomon XT-4 OG Domingo",
+    "time": "Por confirmar",
+    "price": "Por confirmar",
+    "stores": [],
+    "image": "http://mrevistademilenio.com/wp-content/uploads/2026/09/L45487300_A2_AMB_DOMINGO.png.webp",
+    "url": "https://mrevistademilenio.com/salomon-domingo-xt-4-og/",
+    "slug": "salomon-xt-4-og-domingo"
+  },
+  {
+    "day": "Viernes",
+    "date": "18.09",
+    "model": "Kith x On K-Tech 3",
+    "time": "Por confirmar",
+    "price": "$180-$190",
+    "stores": [
+      "Kith"
+    ],
+    "image": "https://images.soleretriever.com/blog/83b490cdedc0aa0d5f859ed09c4c7e87af146486-1240x760.png?rect=0,55,1240,651&w=1200&h=630&fit=fill&auto=format",
+    "url": "https://www.soleretriever.com/news/articles/kith-on-k-tech-fall-2026-collection-release-date-september-2026",
+    "slug": "kith-x-on-k-tech-3"
+  },
+  {
     "day": "Viernes",
     "date": "18.09",
     "model": "Telfar x Timberland Fall 2026",
