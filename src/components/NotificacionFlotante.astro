@@ -1,8 +1,11 @@
 ---
-// Tarjeta flotante estilo "notificación": muestra la marca más reciente
-// de Marcas a Seguir y el último lanzamiento, alternando entre ambos.
-// Se coloca en cualquier página con: import NotificacionFlotante from '../components/NotificacionFlotante.astro';
-// y luego <NotificacionFlotante marcas={marcas} drops={drops} />
+// Widget de notificaciones flotantes tipo "Sole Retriever": una tarjeta que va
+// cambiando sola cada pocos segundos (marcas nuevas y lanzamientos, en bucle),
+// con un pequeño efecto de "pila" detrás, y que al pasar el cursor por encima
+// se despliega mostrando el historial de lo que ha ido apareciendo.
+//
+// Uso: import NotificacionFlotante from '../components/NotificacionFlotante.astro';
+//      <NotificacionFlotante marcas={marcas} drops={drops} />
 
 interface Marca {
   slug: string;
@@ -23,52 +26,58 @@ interface Drop {
 
 const { marcas = [], drops = [] } = Astro.props as { marcas: Marca[]; drops: Drop[] };
 
-const marcaMasReciente = [...marcas].sort(
-  (a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime()
-)[0];
-
-const dropMasReciente = drops[0];
-
-const candidatos = [];
-
-if (marcaMasReciente) {
-  candidatos.push({
-    id: `marca-${marcaMasReciente.slug}`,
+const marcasOrdenadas = [...marcas]
+  .sort((a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime())
+  .slice(0, 6)
+  .map((m) => ({
+    id: `marca-${m.slug}`,
     etiqueta: '🆕 Marca a seguir',
-    titulo: marcaMasReciente.name,
-    subtitulo: marcaMasReciente.description.length > 70
-      ? marcaMasReciente.description.slice(0, 70) + '…'
-      : marcaMasReciente.description,
-    imagen: marcaMasReciente.image,
-    enlace: `/marcas/${marcaMasReciente.slug}`,
-  });
-}
+    titulo: m.name,
+    subtitulo: m.description.length > 70 ? m.description.slice(0, 70) + '…' : m.description,
+    imagen: m.image,
+    enlace: `/marcas/${m.slug}`,
+  }));
 
-if (dropMasReciente) {
-  candidatos.push({
-    id: `drop-${dropMasReciente.slug || dropMasReciente.model}`,
-    etiqueta: '🔥 Nuevo lanzamiento',
-    titulo: dropMasReciente.model,
-    subtitulo: dropMasReciente.date ? `Disponible: ${dropMasReciente.day ? dropMasReciente.day + ' ' : ''}${dropMasReciente.date}` : 'Disponible próximamente',
-    imagen: dropMasReciente.image,
-    enlace: dropMasReciente.slug ? `/noticias/${dropMasReciente.slug}` : (dropMasReciente.url || '/'),
-  });
+const dropsOrdenados = drops.slice(0, 8).map((d) => ({
+  id: `drop-${d.slug || d.model}`,
+  etiqueta: '🔥 Nuevo lanzamiento',
+  titulo: d.model,
+  subtitulo: d.date ? `Disponible: ${d.day ? d.day + ' ' : ''}${d.date}` : 'Disponible próximamente',
+  imagen: d.image,
+  enlace: d.slug ? `/noticias/${d.slug}` : (d.url || '/'),
+}));
+
+// Intercalamos marca / lanzamiento / marca / lanzamiento... para que no salgan
+// todas las marcas seguidas y luego todos los lanzamientos.
+const candidatos = [];
+const maxLen = Math.max(marcasOrdenadas.length, dropsOrdenados.length);
+for (let i = 0; i < maxLen; i++) {
+  if (marcasOrdenadas[i]) candidatos.push(marcasOrdenadas[i]);
+  if (dropsOrdenados[i]) candidatos.push(dropsOrdenados[i]);
 }
 ---
 
 {candidatos.length > 0 && (
-  <div id="notif-flotante" class="notif-flotante" role="status" aria-live="polite" hidden>
-    <button type="button" class="notif-cerrar" aria-label="Cerrar notificación">✕</button>
-    <a class="notif-link" href="#">
-      <div class="notif-media">
-        <img src="" alt="" loading="lazy" />
-      </div>
-      <div class="notif-body">
-        <span class="notif-tag"></span>
-        <strong class="notif-title"></strong>
-        <span class="notif-sub"></span>
-      </div>
-    </a>
+  <div id="notif-widget" class="notif-widget" hidden>
+    <button type="button" class="notif-cerrar" aria-label="Cerrar notificaciones">✕</button>
+
+    <div class="notif-pila" id="notif-pila" role="status" aria-live="polite">
+      <div class="notif-ghost notif-ghost-2"></div>
+      <div class="notif-ghost notif-ghost-1"></div>
+      <a class="notif-card" id="notif-card-actual" href="#">
+        <div class="notif-media"><img src="" alt="" loading="lazy" /></div>
+        <div class="notif-body">
+          <span class="notif-tag"></span>
+          <strong class="notif-title"></strong>
+          <span class="notif-sub"></span>
+        </div>
+      </a>
+    </div>
+
+    <div class="notif-historial" id="notif-historial">
+      <div class="notif-historial-head">Últimas novedades</div>
+      <div class="notif-historial-lista" id="notif-historial-lista"></div>
+    </div>
   </div>
 
   <script type="application/json" id="notif-datos" set:html={JSON.stringify(candidatos)} is:inline />
@@ -76,10 +85,10 @@ if (dropMasReciente) {
   <script is:inline>
     (function () {
       const datosEl = document.getElementById('notif-datos');
-      const card = document.getElementById('notif-flotante');
-      if (!datosEl || !card) return;
+      const widget = document.getElementById('notif-widget');
+      if (!datosEl || !widget) return;
 
-      let candidatos;
+      let candidatos = [];
       try {
         candidatos = JSON.parse(datosEl.textContent || '[]');
       } catch {
@@ -87,114 +96,233 @@ if (dropMasReciente) {
       }
       if (!candidatos.length) return;
 
-      const DISMISS_KEY = 'apoloRadarNotifDescartadas';
-      const INDEX_KEY = 'apoloRadarNotifIndice';
+      const CERRADO_KEY = 'apoloRadarNotifCerrado';
+      const POS_KEY = 'apoloRadarNotifPos';
+      const HIST_KEY = 'apoloRadarNotifHistorial';
+      const INTERVALO_MS = 6000;
+      const RETRASO_INICIAL_MS = 2500;
+      const MAX_HISTORIAL = 12;
 
-      let descartadas = [];
+      if (sessionStorage.getItem(CERRADO_KEY) === '1') return;
+
+      let posicion = 0;
       try {
-        descartadas = JSON.parse(sessionStorage.getItem(DISMISS_KEY) || '[]');
+        posicion = parseInt(sessionStorage.getItem(POS_KEY) || '0', 10) || 0;
       } catch {}
 
-      const disponibles = candidatos.filter((c) => !descartadas.includes(c.id));
-      if (!disponibles.length) return;
-
-      let indice = 0;
+      let historialIds = [];
       try {
-        indice = parseInt(sessionStorage.getItem(INDEX_KEY) || '0', 10) || 0;
+        historialIds = JSON.parse(sessionStorage.getItem(HIST_KEY) || '[]');
       } catch {}
 
-      const elegido = disponibles[indice % disponibles.length];
-
-      try {
-        sessionStorage.setItem(INDEX_KEY, String(indice + 1));
-      } catch {}
-
-      const img = card.querySelector('.notif-media img');
-      const link = card.querySelector('.notif-link');
+      const card = document.getElementById('notif-card-actual');
+      const pila = document.getElementById('notif-pila');
+      const historialLista = document.getElementById('notif-historial-lista');
+      const img = card.querySelector('img');
       const tag = card.querySelector('.notif-tag');
       const title = card.querySelector('.notif-title');
       const sub = card.querySelector('.notif-sub');
 
-      if (elegido.imagen) {
-        img.src = elegido.imagen;
-        img.alt = elegido.titulo;
-        img.style.display = '';
-      } else {
-        img.style.display = 'none';
+      function pintarTarjeta(item) {
+        if (item.imagen) {
+          img.src = item.imagen;
+          img.alt = item.titulo;
+          img.style.display = '';
+        } else {
+          img.style.display = 'none';
+        }
+        card.href = item.enlace;
+        tag.textContent = item.etiqueta;
+        title.textContent = item.titulo;
+        sub.textContent = item.subtitulo || '';
       }
-      link.setAttribute('href', elegido.enlace);
-      tag.textContent = elegido.etiqueta;
-      title.textContent = elegido.titulo;
-      sub.textContent = elegido.subtitulo || '';
 
-      const cerrar = () => {
-        card.classList.remove('notif-visible');
-        card.classList.add('notif-saliendo');
+      function registrarHistorial(item) {
+        historialIds = historialIds.filter((id) => id !== item.id);
+        historialIds.unshift(item.id);
+        historialIds = historialIds.slice(0, MAX_HISTORIAL);
         try {
-          const actualizadas = descartadas.concat([elegido.id]);
-          sessionStorage.setItem(DISMISS_KEY, JSON.stringify(actualizadas));
+          sessionStorage.setItem(HIST_KEY, JSON.stringify(historialIds));
+        } catch {}
+      }
+
+      function pintarHistorial() {
+        const items = historialIds
+          .map((id) => candidatos.find((c) => c.id === id))
+          .filter(Boolean);
+        historialLista.innerHTML = '';
+        items.forEach((item) => {
+          const fila = document.createElement('a');
+          fila.className = 'notif-hist-fila';
+          fila.href = item.enlace;
+          fila.innerHTML =
+            '<div class="notif-hist-media">' +
+            (item.imagen ? '<img src="' + item.imagen + '" alt="" loading="lazy" />' : '') +
+            '</div>' +
+            '<div class="notif-hist-body">' +
+            '<span class="notif-hist-tag">' + item.etiqueta + '</span>' +
+            '<span class="notif-hist-title">' + item.titulo + '</span>' +
+            '</div>';
+          historialLista.appendChild(fila);
+        });
+      }
+
+      function avanzar() {
+        const item = candidatos[posicion % candidatos.length];
+        pintarTarjeta(item);
+        registrarHistorial(item);
+        pintarHistorial();
+
+        pila.classList.remove('notif-pila-entrando');
+        void pila.offsetWidth;
+        pila.classList.add('notif-pila-entrando');
+
+        posicion += 1;
+        try {
+          sessionStorage.setItem(POS_KEY, String(posicion));
+        } catch {}
+      }
+
+      let temporizador = null;
+      function iniciarRotacion() {
+        detenerRotacion();
+        temporizador = setInterval(avanzar, INTERVALO_MS);
+      }
+      function detenerRotacion() {
+        if (temporizador) clearInterval(temporizador);
+        temporizador = null;
+      }
+
+      widget.addEventListener('mouseenter', () => {
+        widget.classList.add('notif-expandido');
+        detenerRotacion();
+      });
+      widget.addEventListener('mouseleave', () => {
+        widget.classList.remove('notif-expandido');
+        iniciarRotacion();
+      });
+
+      widget.querySelector('.notif-cerrar').addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        detenerRotacion();
+        widget.classList.add('notif-saliendo');
+        try {
+          sessionStorage.setItem(CERRADO_KEY, '1');
         } catch {}
         setTimeout(() => {
-          card.hidden = true;
-        }, 350);
-      };
-
-      card.querySelector('.notif-cerrar').addEventListener('click', (e) => {
-        e.preventDefault();
-        cerrar();
+          widget.hidden = true;
+        }, 300);
       });
 
       setTimeout(() => {
-        card.hidden = false;
-        requestAnimationFrame(() => card.classList.add('notif-visible'));
-      }, 4000);
-
-      setTimeout(() => {
-        if (!card.hidden) cerrar();
-      }, 16000);
+        widget.hidden = false;
+        avanzar();
+        requestAnimationFrame(() => widget.classList.add('notif-visible'));
+        iniciarRotacion();
+      }, RETRASO_INICIAL_MS);
     })();
   </script>
 )}
 
 <style>
-  .notif-flotante {
+  .notif-widget {
     position: fixed;
     left: 16px;
     bottom: 16px;
     z-index: 999;
-    display: flex;
-    align-items: stretch;
     width: min(320px, calc(100vw - 32px));
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .notif-widget.notif-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .notif-widget.notif-saliendo {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  .notif-cerrar {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 50%;
     background: #111;
     color: #fff;
+    font-size: 11px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .notif-pila {
+    position: relative;
+  }
+
+  .notif-ghost {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    background: #1c1c1c;
     border-radius: 14px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-    overflow: hidden;
-    transform: translateY(24px);
-    opacity: 0;
-    transition: transform 0.35s ease, opacity 0.35s ease;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .notif-flotante.notif-visible {
-    transform: translateY(0);
-    opacity: 1;
+  .notif-ghost-1 {
+    transform: translateY(-8px) scale(0.96);
+    opacity: 0.7;
+    z-index: 1;
   }
 
-  .notif-flotante.notif-saliendo {
-    transform: translateY(24px);
-    opacity: 0;
+  .notif-ghost-2 {
+    transform: translateY(-15px) scale(0.92);
+    opacity: 0.4;
+    z-index: 0;
   }
 
-  .notif-link {
+  .notif-card {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 12px;
+    background: #111;
+    color: #fff;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     text-decoration: none;
-    color: inherit;
-    flex: 1;
-    min-width: 0;
+    overflow: hidden;
+  }
+
+  .notif-pila-entrando .notif-card {
+    animation: notifEntra 0.4s ease;
+  }
+
+  @keyframes notifEntra {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 
   .notif-media {
@@ -247,30 +375,88 @@ if (dropMasReciente) {
     overflow: hidden;
   }
 
-  .notif-cerrar {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 22px;
-    height: 22px;
-    border: none;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.12);
-    color: #fff;
-    font-size: 12px;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .notif-historial {
+    display: none;
+    margin-top: 8px;
+    background: #111;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    max-height: 320px;
+    overflow-y: auto;
   }
 
-  .notif-cerrar:hover {
-    background: rgba(255, 255, 255, 0.25);
+  .notif-widget.notif-expandido .notif-pila {
+    display: none;
+  }
+
+  .notif-widget.notif-expandido .notif-historial {
+    display: block;
+  }
+
+  .notif-historial-head {
+    padding: 10px 12px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .notif-hist-fila {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #fff;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .notif-hist-fila:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .notif-hist-media {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #222;
+  }
+
+  .notif-hist-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .notif-hist-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .notif-hist-tag {
+    font-size: 10px;
+    font-weight: 600;
+    color: #ffd23f;
+    text-transform: uppercase;
+  }
+
+  .notif-hist-title {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   @media (max-width: 480px) {
-    .notif-flotante {
+    .notif-widget {
       left: 12px;
       right: 12px;
       bottom: 12px;
