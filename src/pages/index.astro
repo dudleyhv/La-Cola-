@@ -3,6 +3,11 @@ import '../styles/global.css';
 import hero from '../data/hero.json';
 import drops from '../data/drops.json';
 import news from '../data/news.json';
+import marcas from '../data/marcas.json';
+
+const marcasDestacadas = [...marcas]
+  .sort((a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime())
+  .slice(0, 3);
 ---
 <!DOCTYPE html>
 <html lang="es">
@@ -108,6 +113,32 @@ import news from '../data/news.json';
       </div>
     </div>
   </section>
+
+  {marcasDestacadas.length > 0 && (
+    <section class="block" id="marcas-a-seguir">
+      <div class="block-head">
+        <h2>Marcas a Seguir</h2>
+        <a class="see-all" href="/marcas-a-seguir">Ver todas</a>
+      </div>
+      <p class="marcas-intro">Esta semana: marcas de streetwear pequeñas o poco conocidas que merece la pena descubrir.</p>
+      <div class="marcas-featured">
+        {marcasDestacadas.map((m) => (
+          <article class="marca-featured-card">
+            <a href={`/marcas/${m.slug}`} class="marca-featured-media">
+              {m.image
+                ? <img src={m.image} alt={m.name} loading="lazy" />
+                : <span class="media-fallback">Sin imagen</span>}
+            </a>
+            <div class="marca-featured-body">
+              <h3><a href={`/marcas/${m.slug}`}>{m.name}</a></h3>
+              <p>{m.description}</p>
+              <a class="see-all" href={`/marcas/${m.slug}`}>Ver ficha completa</a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
 
   <section class="block newsletter" id="newsletter">
     <div>
