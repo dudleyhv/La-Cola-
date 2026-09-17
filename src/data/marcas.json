@@ -28,7 +28,7 @@
     "sourceUrl": null,
     "instagram": "https://www.instagram.com/wholeopolis/",
     "shopUrl": "https://wholeopolis.com/store",
-    "image": null,
+    "image": "/marcas/wholeopolis.png",
     "firstFeatured": "2026-09-17",
     "updates": []
   },
@@ -39,7 +39,7 @@
     "sourceUrl": null,
     "instagram": "https://www.instagram.com/sanity4eva/",
     "shopUrl": "https://sanity4eva.com",
-    "image": null,
+    "image": "/marcas/sanity.png"
     "firstFeatured": "2026-09-17",
     "updates": []
   },
@@ -50,7 +50,7 @@
     "sourceUrl": null,
     "instagram": "https://www.instagram.com/nocon.studios/",
     "shopUrl": "https://noconstudios.com",
-    "image": null,
+    "image": "/marcas/nocon.png"
     "firstFeatured": "2026-09-17",
     "updates": []
   }
