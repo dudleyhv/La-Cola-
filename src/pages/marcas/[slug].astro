@@ -1,0 +1,113 @@
+---
+import '../../styles/global.css';
+import marcas from '../../data/marcas.json';
+
+export function getStaticPaths() {
+  return marcas.map((marca) => ({
+    params: { slug: marca.slug },
+    props: { marca },
+  }));
+}
+
+const { marca } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{marca.name} — Marcas a Seguir — Apolo Radar</title>
+  <meta name="description" content={marca.description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="/">Apolo <span>Radar</span></a>
+    <nav>
+      <a href="/#lanzamientos">Lanzamientos</a>
+      <a href="/#noticias">Noticias</a>
+      <a href="/marcas-a-seguir" class="active">Marcas a Seguir</a>
+    </nav>
+    <a class="btn-subscribe" href="/#newsletter">Suscríbete</a>
+  </div>
+</header>
+
+<main class="wrap article-main">
+
+  <a class="article-back" href="/marcas-a-seguir">&larr; Volver a Marcas a Seguir</a>
+
+  <span class="article-topic">Marca a seguir</span>
+  <h1 class="article-title">{marca.name}</h1>
+
+  <div class="article-media">
+    {marca.image
+      ? <img src={marca.image} alt={marca.name} loading="lazy" />
+      : <span class="media-fallback">Sin imagen</span>}
+  </div>
+
+  <div class="article-body">
+    <p>{marca.description}</p>
+  </div>
+
+  {(marca.instagram || marca.shopUrl) && (
+    <div class="marca-links">
+      {marca.instagram && <a href={marca.instagram} target="_blank" rel="noopener">Instagram</a>}
+      {marca.shopUrl && <a href={marca.shopUrl} target="_blank" rel="noopener">Tienda</a>}
+    </div>
+  )}
+
+  {marca.updates?.length > 0 && (
+    <div class="article-updates">
+      <h2 class="comments-title">Cómo ha evolucionado</h2>
+      <ul class="marca-updates">
+        {marca.updates.map((u) => (
+          <li><span class="num">{u.date}</span> — {u.note}</li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  {marca.sourceUrl && (
+    <p class="article-source">
+      La descubrimos en <a href={marca.sourceUrl} target="_blank" rel="noopener">esta fuente</a>.
+    </p>
+  )}
+
+  <div class="comments-block" id="comentarios">
+    <h2 class="comments-title">Comentarios</h2>
+    <script
+      is:inline
+      src="https://giscus.app/client.js"
+      data-repo="dudleyhv/La-Cola-"
+      data-repo-id="R_kgDOUaOtBQ"
+      data-category="Announcements"
+      data-category-id="DIC_kwDOUaOtBc4DFwCz"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="light"
+      data-lang="es"
+      crossorigin="anonymous"
+      async></script>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>© 2026 Apolo Radar</span>
+    <span>Aviso de afiliados · Contacto · Envía un drop</span>
+  </div>
+</footer>
+
+</body>
+</html>
