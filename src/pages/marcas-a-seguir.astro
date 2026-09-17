@@ -5,6 +5,8 @@ import marcas from '../data/marcas.json';
 const ordenadas = [...marcas].sort(
   (a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime()
 );
+const destacadas = ordenadas.slice(0, 3);
+const resto = ordenadas.slice(3);
 ---
 <!DOCTYPE html>
 <html lang="es">
@@ -28,7 +30,7 @@ const ordenadas = [...marcas].sort(
     <nav>
       <a href="/#lanzamientos">Lanzamientos</a>
       <a href="/#noticias">Noticias</a>
-                  <a href="/marcas-a-seguir" class="active">Marcas a Seguir</a>
+      <a href="/marcas-a-seguir" class="active">Marcas a Seguir</a>
     </nav>
     <a class="btn-subscribe" href="/#newsletter">Suscríbete</a>
   </div>
@@ -41,38 +43,74 @@ const ordenadas = [...marcas].sort(
       <h2>Marcas a Seguir</h2>
     </div>
     <p class="marcas-intro">
-      Cada semana buscamos marcas de streetwear pequeñas o poco conocidas que merece la pena descubrir,
-      y seguimos su evolución en el tiempo.
+      Cada semana descubrimos marcas de streetwear pequeñas o poco conocidas que merece la pena seguir,
+      y vamos contando cómo evolucionan en el tiempo.
     </p>
 
-    <div class="marcas-grid">
-      {ordenadas.map((m) => (
-        <article class="marca-card">
-          <div class="marca-media">
-            {m.image
-              ? <img src={m.image} alt={m.name} loading="lazy" />
-              : <span class="media-fallback">Sin imagen</span>}
-          </div>
-          <h3>{m.name}</h3>
-          <p>{m.description}</p>
-          {m.updates?.length > 0 && (
-            <ul class="marca-updates">
-              {m.updates.map((u) => (
-                <li><span class="num">{u.date}</span> — {u.note}</li>
-              ))}
-            </ul>
-          )}
-                    {(m.instagram || m.shopUrl) && (
-            <div class="marca-links">
-              {m.instagram && <a href={m.instagram} target="_blank" rel="noopener">Instagram</a>}
-              {m.shopUrl && <a href={m.shopUrl} target="_blank" rel="noopener">Tienda</a>}
-            </div>
-          )}
-          {m.sourceUrl && <a class="see-all" href={m.sourceUrl} target="_blank" rel="noopener">Fuente</a>}
-        </article>
-      ))}
-      {ordenadas.length === 0 && <p>Todavía no hay marcas destacadas. ¡Vuelve pronto!</p>}
-    </div>
+    {destacadas.length > 0 && (
+      <>
+        <span class="tag-pill marcas-semana-tag">Esta semana</span>
+        <div class="marcas-featured">
+          {destacadas.map((m) => (
+            <article class="marca-featured-card">
+              <a href={`/marcas/${m.slug}`} class="marca-featured-media">
+                {m.image
+                  ? <img src={m.image} alt={m.name} loading="lazy" />
+                  : <span class="media-fallback">Sin imagen</span>}
+              </a>
+              <div class="marca-featured-body">
+                <h3><a href={`/marcas/${m.slug}`}>{m.name}</a></h3>
+                <p>{m.description}</p>
+                {(m.instagram || m.shopUrl) && (
+                  <div class="marca-links">
+                    {m.instagram && <a href={m.instagram} target="_blank" rel="noopener">Instagram</a>}
+                    {m.shopUrl && <a href={m.shopUrl} target="_blank" rel="noopener">Tienda</a>}
+                  </div>
+                )}
+                <a class="see-all" href={`/marcas/${m.slug}`}>Ver ficha completa</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </>
+    )}
+
+    {resto.length > 0 && (
+      <>
+        <div class="block-head">
+          <h2>Más marcas descubiertas</h2>
+        </div>
+        <div class="marcas-grid">
+          {resto.map((m) => (
+            <article class="marca-card">
+              <a href={`/marcas/${m.slug}`} class="marca-media">
+                {m.image
+                  ? <img src={m.image} alt={m.name} loading="lazy" />
+                  : <span class="media-fallback">Sin imagen</span>}
+              </a>
+              <h3><a href={`/marcas/${m.slug}`}>{m.name}</a></h3>
+              <p>{m.description}</p>
+              {m.updates?.length > 0 && (
+                <ul class="marca-updates">
+                  {m.updates.map((u) => (
+                    <li><span class="num">{u.date}</span> — {u.note}</li>
+                  ))}
+                </ul>
+              )}
+              {(m.instagram || m.shopUrl) && (
+                <div class="marca-links">
+                  {m.instagram && <a href={m.instagram} target="_blank" rel="noopener">Instagram</a>}
+                  {m.shopUrl && <a href={m.shopUrl} target="_blank" rel="noopener">Tienda</a>}
+                </div>
+              )}
+              <a class="see-all" href={`/marcas/${m.slug}`}>Ver ficha completa</a>
+            </article>
+          ))}
+        </div>
+      </>
+    )}
+
+    {ordenadas.length === 0 && <p>Todavía no hay marcas destacadas. ¡Vuelve pronto!</p>}
   </section>
 
 </main>
