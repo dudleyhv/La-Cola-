@@ -1,6 +1,8 @@
 ---
 import '../../styles/global.css';
 import marcas from '../../data/marcas.json';
+import drops from '../../data/drops.json';
+import NotificacionFlotante from '../../components/NotificacionFlotante.astro';
 
 export function getStaticPaths() {
   return marcas.map((marca) => ({
@@ -101,6 +103,8 @@ const { marca } = Astro.props;
   </div>
 
 </main>
+
+<NotificacionFlotante marcas={marcas} drops={drops} />
 
 <footer>
   <div class="wrap foot-inner">
