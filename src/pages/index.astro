@@ -114,8 +114,14 @@ import news from '../data/news.json';
       <h2>No te pierdas ningún drop</h2>
       <p>Un aviso al día con los lanzamientos, restocks y noticias que de verdad importan. Sin spam.</p>
     </div>
-    <form class="sub-form">
-      <input type="email" placeholder="tu@email.com" aria-label="Correo electrónico" required />
+    <form
+      class="sub-form"
+      action="https://buttondown.com/api/emails/embed-subscribe/dudleyhv"
+      method="post"
+      target="_blank"
+    >
+      <input type="email" name="email" placeholder="tu@email.com" aria-label="Correo electrónico" required />
+      <input type="hidden" value="1" name="embed" />
       <button type="submit">Apuntarme</button>
     </form>
   </section>
