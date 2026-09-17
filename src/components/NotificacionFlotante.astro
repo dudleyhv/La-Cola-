@@ -1,0 +1,280 @@
+---
+// Tarjeta flotante estilo "notificación": muestra la marca más reciente
+// de Marcas a Seguir y el último lanzamiento, alternando entre ambos.
+// Se coloca en cualquier página con: import NotificacionFlotante from '../components/NotificacionFlotante.astro';
+// y luego <NotificacionFlotante marcas={marcas} drops={drops} />
+
+interface Marca {
+  slug: string;
+  name: string;
+  description: string;
+  image: string | null;
+  firstFeatured: string;
+}
+
+interface Drop {
+  slug?: string;
+  model: string;
+  image: string | null;
+  url?: string;
+  date?: string;
+  day?: string;
+}
+
+const { marcas = [], drops = [] } = Astro.props as { marcas: Marca[]; drops: Drop[] };
+
+const marcaMasReciente = [...marcas].sort(
+  (a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime()
+)[0];
+
+const dropMasReciente = drops[0];
+
+const candidatos = [];
+
+if (marcaMasReciente) {
+  candidatos.push({
+    id: `marca-${marcaMasReciente.slug}`,
+    etiqueta: '🆕 Marca a seguir',
+    titulo: marcaMasReciente.name,
+    subtitulo: marcaMasReciente.description.length > 70
+      ? marcaMasReciente.description.slice(0, 70) + '…'
+      : marcaMasReciente.description,
+    imagen: marcaMasReciente.image,
+    enlace: `/marcas/${marcaMasReciente.slug}`,
+  });
+}
+
+if (dropMasReciente) {
+  candidatos.push({
+    id: `drop-${dropMasReciente.slug || dropMasReciente.model}`,
+    etiqueta: '🔥 Nuevo lanzamiento',
+    titulo: dropMasReciente.model,
+    subtitulo: dropMasReciente.date ? `Disponible: ${dropMasReciente.day ? dropMasReciente.day + ' ' : ''}${dropMasReciente.date}` : 'Disponible próximamente',
+    imagen: dropMasReciente.image,
+    enlace: dropMasReciente.slug ? `/noticias/${dropMasReciente.slug}` : (dropMasReciente.url || '/'),
+  });
+}
+---
+
+{candidatos.length > 0 && (
+  <div id="notif-flotante" class="notif-flotante" role="status" aria-live="polite" hidden>
+    <button type="button" class="notif-cerrar" aria-label="Cerrar notificación">✕</button>
+    <a class="notif-link" href="#">
+      <div class="notif-media">
+        <img src="" alt="" loading="lazy" />
+      </div>
+      <div class="notif-body">
+        <span class="notif-tag"></span>
+        <strong class="notif-title"></strong>
+        <span class="notif-sub"></span>
+      </div>
+    </a>
+  </div>
+
+  <script type="application/json" id="notif-datos" set:html={JSON.stringify(candidatos)} is:inline />
+
+  <script is:inline>
+    (function () {
+      const datosEl = document.getElementById('notif-datos');
+      const card = document.getElementById('notif-flotante');
+      if (!datosEl || !card) return;
+
+      let candidatos;
+      try {
+        candidatos = JSON.parse(datosEl.textContent || '[]');
+      } catch {
+        return;
+      }
+      if (!candidatos.length) return;
+
+      const DISMISS_KEY = 'apoloRadarNotifDescartadas';
+      const INDEX_KEY = 'apoloRadarNotifIndice';
+
+      let descartadas = [];
+      try {
+        descartadas = JSON.parse(sessionStorage.getItem(DISMISS_KEY) || '[]');
+      } catch {}
+
+      const disponibles = candidatos.filter((c) => !descartadas.includes(c.id));
+      if (!disponibles.length) return;
+
+      let indice = 0;
+      try {
+        indice = parseInt(sessionStorage.getItem(INDEX_KEY) || '0', 10) || 0;
+      } catch {}
+
+      const elegido = disponibles[indice % disponibles.length];
+
+      try {
+        sessionStorage.setItem(INDEX_KEY, String(indice + 1));
+      } catch {}
+
+      const img = card.querySelector('.notif-media img');
+      const link = card.querySelector('.notif-link');
+      const tag = card.querySelector('.notif-tag');
+      const title = card.querySelector('.notif-title');
+      const sub = card.querySelector('.notif-sub');
+
+      if (elegido.imagen) {
+        img.src = elegido.imagen;
+        img.alt = elegido.titulo;
+        img.style.display = '';
+      } else {
+        img.style.display = 'none';
+      }
+      link.setAttribute('href', elegido.enlace);
+      tag.textContent = elegido.etiqueta;
+      title.textContent = elegido.titulo;
+      sub.textContent = elegido.subtitulo || '';
+
+      const cerrar = () => {
+        card.classList.remove('notif-visible');
+        card.classList.add('notif-saliendo');
+        try {
+          const actualizadas = descartadas.concat([elegido.id]);
+          sessionStorage.setItem(DISMISS_KEY, JSON.stringify(actualizadas));
+        } catch {}
+        setTimeout(() => {
+          card.hidden = true;
+        }, 350);
+      };
+
+      card.querySelector('.notif-cerrar').addEventListener('click', (e) => {
+        e.preventDefault();
+        cerrar();
+      });
+
+      setTimeout(() => {
+        card.hidden = false;
+        requestAnimationFrame(() => card.classList.add('notif-visible'));
+      }, 4000);
+
+      setTimeout(() => {
+        if (!card.hidden) cerrar();
+      }, 16000);
+    })();
+  </script>
+)}
+
+<style>
+  .notif-flotante {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 999;
+    display: flex;
+    align-items: stretch;
+    width: min(320px, calc(100vw - 32px));
+    background: #111;
+    color: #fff;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    transform: translateY(24px);
+    opacity: 0;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .notif-flotante.notif-visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .notif-flotante.notif-saliendo {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+
+  .notif-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    text-decoration: none;
+    color: inherit;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .notif-media {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #222;
+  }
+
+  .notif-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .notif-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .notif-tag {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #ffd23f;
+  }
+
+  .notif-title {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .notif-sub {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .notif-cerrar {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .notif-cerrar:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  @media (max-width: 480px) {
+    .notif-flotante {
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      width: auto;
+    }
+  }
+</style>

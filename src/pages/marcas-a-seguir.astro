@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css';
 import marcas from '../data/marcas.json';
+import drops from '../data/drops.json';
+import NotificacionFlotante from '../components/NotificacionFlotante.astro';
 
 const ordenadas = [...marcas].sort(
   (a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime()
@@ -114,6 +116,8 @@ const resto = ordenadas.slice(3);
   </section>
 
 </main>
+
+<NotificacionFlotante marcas={marcas} drops={drops} />
 
 <footer>
   <div class="wrap foot-inner">

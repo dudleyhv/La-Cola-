@@ -4,6 +4,7 @@ import hero from '../data/hero.json';
 import drops from '../data/drops.json';
 import news from '../data/news.json';
 import marcas from '../data/marcas.json';
+import NotificacionFlotante from '../components/NotificacionFlotante.astro';
 
 const marcasDestacadas = [...marcas]
   .sort((a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime())
@@ -158,6 +159,8 @@ const marcasDestacadas = [...marcas]
   </section>
 
 </main>
+
+<NotificacionFlotante marcas={marcas} drops={drops} />
 
 <footer>
   <div class="wrap foot-inner">
