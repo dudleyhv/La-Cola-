@@ -403,7 +403,11 @@ for (let i = 0; i < maxLen; i++) {
     color: rgba(255, 255, 255, 0.5);
   }
 
-  .notif-hist-fila {
+  /* Las filas de abajo las crea JavaScript al vuelo (cuando pasas el cursor),
+     así que Astro no las "ve" al construir la página y no les aplicaría estos
+     estilos si no los marcamos como :global(). */
+
+  :global(.notif-hist-fila) {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -413,11 +417,11 @@ for (let i = 0; i < maxLen; i++) {
     border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .notif-hist-fila:hover {
+  :global(.notif-hist-fila:hover) {
     background: rgba(255, 255, 255, 0.06);
   }
 
-  .notif-hist-media {
+  :global(.notif-hist-media) {
     flex-shrink: 0;
     width: 34px;
     height: 34px;
@@ -426,28 +430,28 @@ for (let i = 0; i < maxLen; i++) {
     background: #222;
   }
 
-  .notif-hist-media img {
+  :global(.notif-hist-media img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
   }
 
-  .notif-hist-body {
+  :global(.notif-hist-body) {
     display: flex;
     flex-direction: column;
     gap: 1px;
     min-width: 0;
   }
 
-  .notif-hist-tag {
+  :global(.notif-hist-tag) {
     font-size: 10px;
     font-weight: 600;
     color: #ffd23f;
     text-transform: uppercase;
   }
 
-  .notif-hist-title {
+  :global(.notif-hist-title) {
     font-size: 13px;
     font-weight: 600;
     white-space: nowrap;
