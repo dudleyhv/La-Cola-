@@ -76,6 +76,37 @@ nav a.active{color:var(--ink);}
 }
 .hero-art img{width:100%;height:100%;object-fit:cover;display:block;}
 
+/* ---------- Carrusel de portada ---------- */
+.hero-carousel{position:relative;margin:48px 0 64px;}
+.hero-carousel .hero{margin:0;transition:opacity .22s ease;}
+.hero-carousel .hero.hero-cambiando{opacity:0;}
+.hero-nav{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+  width:40px;height:40px;border-radius:50%;border:1px solid var(--line);
+  background:var(--white);color:var(--ink);font-size:20px;line-height:1;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);transition:background .15s,color .15s;
+}
+.hero-nav:hover{background:var(--ink);color:var(--white);}
+.hero-prev{left:-18px;}
+.hero-next{right:-18px;}
+.hero-dots{
+  position:absolute;bottom:16px;right:16px;z-index:3;
+  display:flex;gap:8px;
+}
+.hero-dot{
+  width:9px;height:9px;border-radius:50%;border:none;
+  background:rgba(255,255,255,.4);cursor:pointer;padding:0;transition:background .15s,transform .15s;
+}
+.hero-dot.activo{background:var(--white);transform:scale(1.2);}
+
+@media (max-width:760px){
+  .hero-nav{width:34px;height:34px;font-size:17px;}
+  .hero-prev{left:6px;}
+  .hero-next{right:6px;}
+  .hero-dots{bottom:10px;right:10px;}
+}
+
 /* ---------- Media / photos ---------- */
 .media-fallback{font-family:'Archivo Black',sans-serif;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--line);}
 .media-fallback--dark{color:#5A5964;}
