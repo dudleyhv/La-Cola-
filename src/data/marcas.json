@@ -4,9 +4,9 @@
     "name": "VIVET",
     "description": "Marca de moda fundada por el creador digital Kai Cenat que fusiona sastrería contemporánea, herencia del streetwear y narrativas subcultureales. La colección debut en Nueva York Fashion Week refleja las raíces triniteña y haitiana del fundador, posicionándose como una propuesta seria en el panorama de la moda urbana.",
     "sourceUrl": "https://www.google.com/url?rct=j&sa=t&url=https://mr-mag.com/kai-cenat-debuts-inaugural-vivet-collection-during-new-york-fashion-week/&ct=ga&cd=CAIyHGRiNzM3OWIxYzViODkxMWM6Y29tOmVzOlVTOkw&usg=AOvVaw3kcWDnyiIGnKCbsEisyFJf",
-        "instagram": "https://www.instagram.com/vivetofficial/",
+    "instagram": "https://www.instagram.com/vivetofficial/",
     "shopUrl": "https://vivetofficial.com",
-   "image": "/marcas/kai-cenat-ropa-1200x678.jpg",
+    "image": "/marcas/kai-cenat-ropa-1200x678.jpg",
     "firstFeatured": "2026-09-15",
     "updates": []
   },
@@ -15,10 +15,43 @@
     "name": "INTENT",
     "description": "Colección de ropa de rendimiento natural lanzada por Arpita Rout que va más allá del concepto tradicional de moda sostenible. Propone una aproximación innovadora combinando textiles naturales con funcionalidad técnica para el uso cotidiano.",
     "sourceUrl": "https://www.google.com/url?rct=j&sa=t&url=https://indianretailer.com/brandlicense/archives/news/arpita-routs-intent-debuts-natural-performance-clothing-collection.n5927&ct=ga&cd=CAIyHGRiNzM3OWIxYzViODkxMWM6Y29tOmVzOlVTOkw&usg=AOvVaw2zLUld2Psp57LxbGAHCKQM",
-     "instagram": "https://www.instagram.com/intentwear/",
+    "instagram": "https://www.instagram.com/intentwear/",
     "shopUrl": "https://intentwear.in/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAcGRvZgJleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAad-_tF4S9cr2xfa3Tc7ymWKFGgplxJFEXfUpoomwJfFFZlTHn_kWMU60nwLVg_aem_ZAvPGW0dn9YXTzx_GiGyYA",
     "image": "/marcas/Untitled design - 2026-09-14T142613.265.jpg",
     "firstFeatured": "2026-09-15",
+    "updates": []
+  },
+  {
+    "slug": "wholeopolis",
+    "name": "Wholeopolis",
+    "description": "Marca de streetwear conocida por sus \"Rodeo Walkers\", un calzado tipo zueco de estética western que reinventa con estampados llamativos: piel de vaca, llamas góticas y colores tierra. Con cerca de 70.000 seguidores, combina la comodidad de un zueco con un diseño que rompe con lo esperado.",
+    "sourceUrl": null,
+    "instagram": "https://www.instagram.com/wholeopolis/",
+    "shopUrl": "https://wholeopolis.com/store",
+    "image": null,
+    "firstFeatured": "2026-09-17",
+    "updates": []
+  },
+  {
+    "slug": "sanity",
+    "name": "Sanity",
+    "description": "Marca de streetwear centrada en prendas de inspiración workwear, con su línea \"Carpenter\" de pantalones como pieza central. Acaban de relanzar esta colección tras agotarse, consolidándose como una firma a seguir dentro de la estética utilitaria.",
+    "sourceUrl": null,
+    "instagram": "https://www.instagram.com/sanity4eva/",
+    "shopUrl": "https://sanity4eva.com",
+    "image": null,
+    "firstFeatured": "2026-09-17",
+    "updates": []
+  },
+  {
+    "slug": "nocon-studios",
+    "name": "NoCon Studios",
+    "description": "Marca emergente de Nueva York especializada en gorros y cadenas, fundada por @cvrrent.flow. Con menos de mil seguidores todavía, es de esas marcas que se descubren pronto y crecen rápido — justo lo que buscamos en esta sección.",
+    "sourceUrl": null,
+    "instagram": "https://www.instagram.com/nocon.studios/",
+    "shopUrl": "https://noconstudios.com",
+    "image": null,
+    "firstFeatured": "2026-09-17",
     "updates": []
   }
 ]
