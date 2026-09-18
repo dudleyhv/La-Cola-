@@ -1,48 +1,21 @@
 ---
-import '../styles/global.css';
-import hero from '../data/hero.json';
-import drops from '../data/drops.json';
-import news from '../data/news.json';
-import marcas from '../data/marcas.json';
-import NotificacionFlotante from '../components/NotificacionFlotante.astro';
+import '../../styles/global.css';
+import articulos from '../../data/articulos.json';
+import marcas from '../../data/marcas.json';
+import drops from '../../data/drops.json';
+import NotificacionFlotante from '../../components/NotificacionFlotante.astro';
 
-const marcasDestacadas = [...marcas]
-  .sort((a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime())
-  .slice(0, 3);
-
-// Carrusel de portada: usamos hasta 5 lanzamientos recientes como diapositivas.
-// Si todavía no hay ninguno, usamos hero.json como única diapositiva de reserva.
-const slidesDeDrops = drops.slice(0, 5).map((d) => ({
-  tag: 'Lanzamiento destacado',
-  dateLabel: d.day && d.date !== 'Próximamente' ? `${d.day} ${d.date}` : '',
-  title: d.model,
-  description: `Hora de apertura: ${d.time} · Precio: ${d.price}`,
-  store: d.stores?.length > 0 ? d.stores.join(', ') : 'tienda por confirmar',
-  image: d.image,
-  ctaText: 'Leer la noticia completa',
-  href: d.slug ? `/noticias/${d.slug}` : d.url,
-}));
-
-const heroSlides = slidesDeDrops.length > 0
-  ? slidesDeDrops
-  : [{
-      tag: hero.tag,
-      dateLabel: hero.dateLabel,
-      title: hero.title,
-      description: hero.description,
-      store: hero.store,
-      image: hero.image,
-      ctaText: hero.ctaText,
-      href: hero.slug ? `/noticias/${hero.slug}` : hero.ctaUrl,
-    }];
+const ordenados = [...articulos].sort(
+  (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+);
 ---
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apolo Radar — Sneakers y streetwear al día</title>
-  <meta name="description" content="Lanzamientos, restocks y noticias de sneakers y streetwear, actualizado cada día." />
+  <title>Todas las noticias — Apolo Radar</title>
+  <meta name="description" content="Todas las noticias y lanzamientos de sneakers y streetwear publicados en Apolo Radar." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -56,250 +29,35 @@ const heroSlides = slidesDeDrops.length > 0
   <div class="wrap header-inner">
     <a class="wordmark" href="/">Apolo <span>Radar</span></a>
     <nav>
-      <a href="/noticias">Noticias</a>
+      <a href="/noticias" class="active">Noticias</a>
       <a href="/marcas-a-seguir">Marcas a Seguir</a>
       <a href="/lanzamientos">Lanzamientos</a>
     </nav>
-    <a class="btn-subscribe" href="#newsletter">Suscríbete</a>
+    <a class="btn-subscribe" href="/#newsletter">Suscríbete</a>
   </div>
 </header>
 
 <main class="wrap">
 
-  <section class="hero-carousel" id="hero-carousel">
-    <div class="hero" id="hero-slide">
-      <div class="ticket">
-        <div class="ticket-eyebrow-row">
-          <span class="tag-pill" id="hero-tag">{heroSlides[0].tag}</span>
-          <span class="countdown" id="hero-date">{heroSlides[0].dateLabel}</span>
-        </div>
-        <h1 id="hero-title">{heroSlides[0].title}</h1>
-        <p class="meta" id="hero-desc">{heroSlides[0].description}</p>
-        <div class="price-row">
-          <span class="store" id="hero-store">{heroSlides[0].store}</span>
-        </div>
-        <a class="cta" id="hero-cta" href={heroSlides[0].href}>{heroSlides[0].ctaText}</a>
-      </div>
-      <div class="hero-art">
-        <img id="hero-img" src={heroSlides[0].image || ''} alt={heroSlides[0].title} loading="lazy" style={heroSlides[0].image ? '' : 'display:none'} />
-        <span class="media-fallback media-fallback--dark" id="hero-img-fallback" style={heroSlides[0].image ? 'display:none' : ''}>Sin imagen</span>
-      </div>
-    </div>
-
-    {heroSlides.length > 1 && (
-      <>
-        <button type="button" class="hero-nav hero-prev" id="hero-prev" aria-label="Lanzamiento anterior">‹</button>
-        <button type="button" class="hero-nav hero-next" id="hero-next" aria-label="Siguiente lanzamiento">›</button>
-        <div class="hero-dots" id="hero-dots">
-          {heroSlides.map((_, i) => (
-            <button type="button" class={`hero-dot${i === 0 ? ' activo' : ''}`} data-idx={i} aria-label={`Ir al lanzamiento ${i + 1}`}></button>
-          ))}
-        </div>
-      </>
-    )}
-  </section>
-
-  {heroSlides.length > 1 && (
-    <script type="application/json" id="hero-datos" set:html={JSON.stringify(heroSlides)} is:inline />
-  )}
-
-  {heroSlides.length > 1 && (
-    <script is:inline>
-      (function () {
-        const datosEl = document.getElementById('hero-datos');
-        if (!datosEl) return;
-
-        let slides = [];
-        try {
-          slides = JSON.parse(datosEl.textContent || '[]');
-        } catch {
-          return;
-        }
-        if (slides.length < 2) return;
-
-        const slideEl = document.getElementById('hero-slide');
-        const tagEl = document.getElementById('hero-tag');
-        const dateEl = document.getElementById('hero-date');
-        const titleEl = document.getElementById('hero-title');
-        const descEl = document.getElementById('hero-desc');
-        const storeEl = document.getElementById('hero-store');
-        const ctaEl = document.getElementById('hero-cta');
-        const imgEl = document.getElementById('hero-img');
-        const imgFallbackEl = document.getElementById('hero-img-fallback');
-        const prevBtn = document.getElementById('hero-prev');
-        const nextBtn = document.getElementById('hero-next');
-        const dots = Array.from(document.querySelectorAll('#hero-dots .hero-dot'));
-
-        const INTERVALO_MS = 6000;
-        let indice = 0;
-        let temporizador = null;
-
-        function pintar(i) {
-          const s = slides[i];
-          tagEl.textContent = s.tag;
-          dateEl.textContent = s.dateLabel || '';
-          titleEl.textContent = s.title;
-          descEl.textContent = s.description;
-          storeEl.textContent = s.store;
-          ctaEl.setAttribute('href', s.href);
-          ctaEl.textContent = s.ctaText;
-          if (s.image) {
-            imgEl.src = s.image;
-            imgEl.alt = s.title;
-            imgEl.style.display = '';
-            imgFallbackEl.style.display = 'none';
-          } else {
-            imgEl.style.display = 'none';
-            imgFallbackEl.style.display = '';
-          }
-          dots.forEach((d, di) => d.classList.toggle('activo', di === i));
-        }
-
-        function irA(i) {
-          indice = (i + slides.length) % slides.length;
-          slideEl.classList.add('hero-cambiando');
-          setTimeout(() => {
-            pintar(indice);
-            slideEl.classList.remove('hero-cambiando');
-          }, 220);
-        }
-
-        function reiniciarTemporizador() {
-          if (temporizador) clearInterval(temporizador);
-          temporizador = setInterval(() => irA(indice + 1), INTERVALO_MS);
-        }
-
-        prevBtn.addEventListener('click', () => {
-          irA(indice - 1);
-          reiniciarTemporizador();
-        });
-        nextBtn.addEventListener('click', () => {
-          irA(indice + 1);
-          reiniciarTemporizador();
-        });
-        dots.forEach((dot, di) => {
-          dot.addEventListener('click', () => {
-            irA(di);
-            reiniciarTemporizador();
-          });
-        });
-
-        const carrusel = document.getElementById('hero-carousel');
-        carrusel.addEventListener('mouseenter', () => {
-          if (temporizador) clearInterval(temporizador);
-        });
-        carrusel.addEventListener('mouseleave', reiniciarTemporizador);
-
-        reiniciarTemporizador();
-      })();
-    </script>
-  )}
-
-  <section class="block" id="noticias">
+  <section class="block">
     <div class="block-head">
-      <h2>Noticias</h2>
-      <a class="see-all" href="/noticias">Ver todas</a>
+      <h2>Todas las noticias</h2>
     </div>
-    <div class="news-grid">
-      <a class="news-feature" href={news.feature.slug ? `/noticias/${news.feature.slug}` : news.feature.url}>
-        <div class="feature-media">
-          {news.feature.image
-            ? <img src={news.feature.image} alt={news.feature.title} loading="lazy" />
-            : <span class="media-fallback">Sin imagen</span>}
-        </div>
-        <span class="topic">{news.feature.topic}</span>
-        <h3>{news.feature.title}</h3>
-        <p>{news.feature.excerpt}</p>
-      </a>
-      <div class="news-side">
-        {news.side.map((n) => (
-          <a class="news-card" href={n.slug ? `/noticias/${n.slug}` : n.url}>
-            <div class="card-media">
-              {n.image
-                ? <img src={n.image} alt={n.title} loading="lazy" />
-                : <span class="media-fallback">Sin imagen</span>}
-            </div>
-            <span class="topic">{n.topic}</span>
-            <h4>{n.title}</h4>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
 
-  {marcasDestacadas.length > 0 && (
-    <section class="block" id="marcas-a-seguir">
-      <div class="block-head">
-        <h2>Marcas a Seguir</h2>
-        <a class="see-all" href="/marcas-a-seguir">Ver todas</a>
-      </div>
-      <p class="marcas-intro">Esta semana: marcas de streetwear pequeñas o poco conocidas que merece la pena descubrir.</p>
-      <div class="marcas-featured">
-        {marcasDestacadas.map((m) => (
-          <article class="marca-featured-card">
-            <a href={`/marcas/${m.slug}`} class="marca-featured-media">
-              {m.image
-                ? <img src={m.image} alt={m.name} loading="lazy" />
-                : <span class="media-fallback">Sin imagen</span>}
-            </a>
-            <div class="marca-featured-body">
-              <h3><a href={`/marcas/${m.slug}`}>{m.name}</a></h3>
-              <p>{m.description}</p>
-              <a class="see-all" href={`/marcas/${m.slug}`}>Ver ficha completa</a>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  )}
-
-  <section class="block" id="lanzamientos">
-    <div class="block-head">
-      <h2>Lanzamientos que quizás te interesen</h2>
-      <a class="see-all" href="/lanzamientos">Ver todos</a>
-    </div>
-    <div class="cal-row">
-      {drops.map((d, i) => (
-        <a class="cal-card" href={d.slug ? `/noticias/${d.slug}` : d.url}>
-          <div class="cal-media">
-            {d.image
-              ? <img src={d.image} alt={d.model} loading="lazy" />
+    <div class="marcas-grid">
+      {ordenados.map((a) => (
+        <a class="news-card" href={`/noticias/${a.slug}`}>
+          <div class="card-media">
+            {a.image
+              ? <img src={a.image} alt={a.title} loading="lazy" />
               : <span class="media-fallback">Sin imagen</span>}
-            <div class="cal-date-badge">
-              <span class="cal-badge-day">{d.day || '—'}</span>
-              <span class="cal-badge-date num">{d.date}</span>
-            </div>
-            {i === 0 && <span class="cal-proximo">Próximo</span>}
           </div>
-          <div class="cal-body">
-            <h3 class="cal-model">{d.model}</h3>
-            {d.stores?.length > 0 && (
-              <div class="cal-stores-row">
-                {d.stores.slice(0, 3).map((s) => <span class="cal-store-pill">{s}</span>)}
-              </div>
-            )}
-            <div class="cal-foot"><span>{d.time}</span><span class="num">{d.price}</span></div>
-          </div>
+          <span class="topic">{a.topic}</span>
+          <h4>{a.title}</h4>
         </a>
       ))}
+      {ordenados.length === 0 && <p>Todavía no hay noticias publicadas.</p>}
     </div>
-  </section>
-
-  <section class="block newsletter" id="newsletter">
-    <div>
-      <h2>No te pierdas ningún drop</h2>
-      <p>Un aviso al día con los lanzamientos, restocks y noticias que de verdad importan. Sin spam.</p>
-    </div>
-    <form
-      class="sub-form"
-      action="https://buttondown.com/api/emails/embed-subscribe/dudleyhv"
-      method="post"
-      target="_blank"
-    >
-      <input type="email" name="email" placeholder="tu@email.com" aria-label="Correo electrónico" required />
-      <input type="hidden" value="1" name="embed" />
-      <button type="submit">Apuntarme</button>
-    </form>
   </section>
 
 </main>
