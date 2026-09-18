@@ -5,6 +5,7 @@ import drops from '../data/drops.json';
 import news from '../data/news.json';
 import marcas from '../data/marcas.json';
 import NotificacionFlotante from '../components/NotificacionFlotante.astro';
+import Topico from '../components/Topico.astro';
 
 const marcasDestacadas = [...marcas]
   .sort((a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime())
@@ -229,7 +230,7 @@ const heroSlides = slidesDeDrops.length > 0
             ? <img src={news.feature.image} alt={news.feature.title} loading="lazy" />
             : <span class="media-fallback">Sin imagen</span>}
         </div>
-        <span class="topic">{news.feature.topic}</span>
+        <Topico texto={news.feature.topic} />
         <h3>{news.feature.title}</h3>
         <p>{news.feature.excerpt}</p>
       </a>
@@ -241,7 +242,7 @@ const heroSlides = slidesDeDrops.length > 0
                 ? <img src={n.image} alt={n.title} loading="lazy" />
                 : <span class="media-fallback">Sin imagen</span>}
             </div>
-            <span class="topic">{n.topic}</span>
+            <Topico texto={n.topic} />
             <h4>{n.title}</h4>
           </a>
         ))}
