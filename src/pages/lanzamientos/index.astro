@@ -5,7 +5,9 @@ import marcas from '../../data/marcas.json';
 import drops from '../../data/drops.json';
 import NotificacionFlotante from '../../components/NotificacionFlotante.astro';
 
-const lanzamientos = articulos.filter((a) => a.type === 'lanzamiento');
+// Solo publicamos lanzamientos que ya tienen foto: sin imagen, la ficha
+// se ve incompleta y no debería salir en este listado todavía.
+const lanzamientos = articulos.filter((a) => a.type === 'lanzamiento' && a.image);
 
 const hoy = new Date();
 hoy.setHours(0, 0, 0, 0);
@@ -82,14 +84,32 @@ for (const item of ordenados) {
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="wordmark" href="/">Apolo <span>Radar</span></a>
-    <nav>
+    <nav id="nav-principal">
       <a href="/noticias">Noticias</a>
       <a href="/marcas-a-seguir">Marcas a Seguir</a>
       <a href="/lanzamientos" class="active">Lanzamientos</a>
     </nav>
-    <a class="btn-subscribe" href="/#newsletter">Suscríbete</a>
+    <div class="header-right">
+      <a class="btn-subscribe" href="/#newsletter">Suscríbete</a>
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-principal">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById('menu-toggle');
+    const nav = document.getElementById('nav-principal');
+    if (!btn || !nav) return;
+    btn.addEventListener('click', function () {
+      const abierto = nav.classList.toggle('nav-abierto');
+      btn.classList.toggle('abierto', abierto);
+      btn.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    });
+  })();
+</script>
 
 <main class="wrap">
 
