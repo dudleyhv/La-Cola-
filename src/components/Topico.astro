@@ -1,0 +1,49 @@
+---
+// Etiqueta de categoría (icono + texto + color) para dar personalidad visual
+// a cada tarjeta según su temática, en vez de un mismo rojo para todo.
+// Uso: <Topico texto={a.topic} /> en lugar de <span class="topic">{a.topic}</span>
+const { texto = '', clase = 'topic' } = Astro.props;
+const t = texto.toLowerCase();
+
+let categoria = 'default';
+if (t.includes('colab')) categoria = 'colab';
+else if (t.includes('lanzamiento')) categoria = 'lanzamiento';
+else if (t.includes('restock')) categoria = 'restock';
+else if (t.includes('debut')) categoria = 'debut';
+else if (t.includes('clásic') || t.includes('clasic') || t.includes('rediseñ')) categoria = 'clasico';
+else if (t.includes('corporativ') || t.includes('movimiento')) categoria = 'corporativo';
+else if (t.includes('novedad')) categoria = 'novedad';
+
+const iconos = {
+  colab: 'M15 7h3a5 5 0 0 1 0 10h-3m-6 0H6a5 5 0 0 1 0-10h3|M8 12h8',
+  lanzamiento: 'M3 4h18v18H3z|M16 2v6|M8 2v6|M3 10h18',
+  restock: 'M23 4v6h-6|M1 20v-6h6|M3.51 9a9 9 0 0 1 14.85-3.36L23 10|M1 14l4.64 4.36A9 9 0 0 0 20.49 15',
+  debut: 'circle:12,12,10|M2 12h20|M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z',
+  clasico: 'polygon:12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2',
+  corporativo: 'M2 7h20v14H2z|M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16',
+  novedad: 'M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L3 3v6.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.82 0l4.6-4.6a2 2 0 0 0 0-2.82z',
+  default: 'M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L3 3v6.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.82 0l4.6-4.6a2 2 0 0 0 0-2.82z',
+};
+
+const partes = iconos[categoria].split('|');
+---
+<span class={`${clase} topic--${categoria}`}>
+  <svg
+    class="topic-icono"
+    width="12" height="12" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" stroke-width="2.4"
+    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+  >
+    {partes.map((p) => {
+      if (p.startsWith('circle:')) {
+        const [cx, cy, r] = p.replace('circle:', '').split(',');
+        return <circle cx={cx} cy={cy} r={r} />;
+      }
+      if (p.startsWith('polygon:')) {
+        return <polygon points={p.replace('polygon:', '')} />;
+      }
+      return <path d={p} />;
+    })}
+  </svg>
+  {texto}
+</span>
