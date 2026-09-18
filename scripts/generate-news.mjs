@@ -100,9 +100,6 @@ async function fetchLatestItems() {
   items.sort((a, b) => new Date(b.date) - new Date(a.date));
   const seleccionados = items.slice(0, 10);
 
-  // Descargamos el texto completo de cada noticia (no solo el resumen del feed RSS)
-  // para poder redactar artículos con más contexto y detalle. Si una descarga falla,
-  // seguimos adelante con el resumen corto del feed como respaldo.
   for (const item of seleccionados) {
     item.fullText = await fetchFullText(item.link);
   }
@@ -205,6 +202,19 @@ function uniqueSlug(base, existingSlugs) {
   return slug;
 }
 
+// Normaliza un titular para poder comparar si dos noticias (aunque vengan de
+// fuentes o enlaces distintos) están contando en realidad la misma historia.
+function normalizeTitle(title) {
+  return title
+    .toString()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 async function loadJson(path, fallback) {
   try {
     const raw = await fs.readFile(path, 'utf-8');
@@ -258,7 +268,17 @@ async function main() {
   const newArticles = [];
 
   function registerArticle({ type, topic, title, excerpt, body, url, image }) {
+    // 1. ¿Ya existe un artículo con este mismo enlace de origen?
     let article = archive.find((a) => a.sourceUrl === url);
+
+    // 2. Si no, ¿ya existe un artículo con el mismo titular (normalizado)?
+    //    Esto evita duplicados cuando dos fuentes distintas (o dos tandas
+    //    del día) cubren la misma noticia con el mismo título.
+    if (!article) {
+      const normalizado = normalizeTitle(title);
+      article = archive.find((a) => normalizeTitle(a.title) === normalizado);
+    }
+
     if (!article) {
       const slug = uniqueSlug(slugify(title), existingSlugs);
       article = {
@@ -310,9 +330,6 @@ async function main() {
   await fs.writeFile(NEWS_PATH, JSON.stringify(news, null, 2) + '\n');
   console.log('src/data/news.json actualizado.');
 
-  // "Lanzamientos" (calendario) ya no se genera aquí de forma automática:
-  // se gestiona a mano con scripts/generate-lanzamiento.mjs. Aquí solo lo leemos
-  // para decidir qué aparece en el hero de portada.
   const drops = await loadJson(DROPS_PATH, []);
   const hero = buildHero(drops, news);
   await fs.writeFile(HERO_PATH, JSON.stringify(hero, null, 2) + '\n');
