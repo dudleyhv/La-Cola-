@@ -53,5 +53,16 @@
     "image": "/marcas/nocon.png",
     "firstFeatured": "2026-09-17",
     "updates": []
+  },
+  {
+    "slug": "cuarter",
+    "name": "Cuarter",
+    "description": "Marca española de gorras centrada en la nostalgia y la creatividad, bajo el lema \"Create the things you wish existed\". Cada gorra está inspirada en sueños de infancia, con diseños sencillos y detalles nostálgicos que buscan contar una historia. Tienen varias colecciones temáticas (Back to School, Nautica, Atelier, Sports, Brisa, Dreams) con precios entre 38€ y 70€.",
+    "sourceUrl": "https://cuartersolutions.com",
+    "instagram": "https://www.instagram.com/cuarter__/",
+    "shopUrl": "https://cuartersolutions.com",
+    "image": "/marcas/cuarter.png",
+    "firstFeatured": "2026-09-18",
+    "updates": []
   }
 ]
