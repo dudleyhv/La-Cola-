@@ -297,6 +297,14 @@ section.block{margin:64px 0;}
 .release-buy-btn:hover{background:var(--red);}
 .article-media{aspect-ratio:16/9;border-radius:var(--radius-tag);overflow:hidden;background:var(--panel);display:flex;align-items:center;justify-content:center;margin-bottom:26px;}
 .article-media img{width:100%;height:100%;object-fit:cover;display:block;}
+
+/* ---------- Galería de fotos del lanzamiento ---------- */
+.release-gallery{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:26px;}
+.release-gallery-item{aspect-ratio:1/1;border-radius:var(--radius-tag);overflow:hidden;background:var(--panel);}
+.release-gallery-item img{width:100%;height:100%;object-fit:cover;display:block;}
+@media (max-width:520px){
+  .release-gallery{grid-template-columns:1fr;}
+}
 .article-body p{margin:0 0 18px;font-size:16px;line-height:1.65;color:var(--ink);}
 .article-source{margin-top:8px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted);}
 .article-source a{font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);}
