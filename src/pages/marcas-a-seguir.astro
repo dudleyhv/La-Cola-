@@ -49,6 +49,21 @@ const resto = ordenadas.slice(3);
       y vamos contando cómo evolucionan en el tiempo.
     </p>
 
+    {ordenadas.length > 5 && (
+      <div class="marca-directorio">
+        {ordenadas.map((m) => (
+          <a href={`/marcas/${m.slug}`} class="marca-directorio-item" title={m.name}>
+            <span class="marca-directorio-foto">
+              {m.image
+                ? <img src={m.image} alt={m.name} loading="lazy" />
+                : <span class="marca-directorio-inicial">{m.name.slice(0, 2).toUpperCase()}</span>}
+            </span>
+            <span class="marca-directorio-nombre">{m.name}</span>
+          </a>
+        ))}
+      </div>
+    )}
+
     {destacadas.length > 0 && (
       <>
         <span class="tag-pill marcas-semana-tag">Esta semana</span>
