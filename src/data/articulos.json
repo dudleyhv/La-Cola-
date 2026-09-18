@@ -65,6 +65,12 @@
     "price": "$140",
     "stores": [
       "SNKRS"
+    ],
+    "sku": "IH7423-400",
+    "colorway": "Racer Blue/Multicolor",
+    "compra": [
+      { "tienda": "Nike SNKRS", "url": "https://www.nike.com/launch" },
+      { "tienda": "Nike.com (buscar)", "url": "https://www.nike.com/w?q=caitlin%201" }
     ]
   },
   {
@@ -86,6 +92,11 @@
     "stores": [
       "telfar.net",
       "timberland.com"
+    ],
+    "colorway": "Wheat / Black",
+    "compra": [
+      { "tienda": "telfar.net", "url": "https://telfar.net" },
+      { "tienda": "Timberland.com", "url": "https://www.timberland.com" }
     ]
   },
   {
@@ -152,7 +163,12 @@
     "date": "Próximamente",
     "time": "Por confirmar",
     "price": "Por confirmar",
-    "stores": []
+    "stores": [],
+    "sku": "IU4876-200",
+    "compra": [
+      { "tienda": "Nike.com (buscar)", "url": "https://www.nike.com/w?q=air%20max%20goadome" },
+      { "tienda": "Foot District (buscar)", "url": "https://www.footdistrict.com/search?q=air+max+goadome" }
+    ]
   },
   {
     "slug": "salomon-xt-4-og-domingo",
@@ -170,7 +186,11 @@
     "date": "10.09",
     "time": "Por confirmar",
     "price": "Por confirmar",
-    "stores": []
+    "stores": [],
+    "compra": [
+      { "tienda": "Salomon.com (buscar)", "url": "https://www.salomon.com/es-es/search?q=xt-4%20domingo" },
+      { "tienda": "Sivasdescalzo (buscar)", "url": "https://www.sivasdescalzo.com/search?q=salomon+xt-4" }
+    ]
   },
   {
     "slug": "kith-x-on-k-tech-3",
@@ -190,6 +210,10 @@
     "price": "$180-$190",
     "stores": [
       "Kith"
+    ],
+    "compra": [
+      { "tienda": "Kith.com", "url": "https://kith.com" },
+      { "tienda": "On.com (buscar)", "url": "https://www.on.com/en-us/search?q=k-tech" }
     ]
   },
   {
