@@ -3,9 +3,11 @@ name: Actualizar noticias
 on:
   schedule:
     # 05:00 UTC = 07:00 en España en horario de verano (CEST, UTC+2).
-    # En horario de invierno (CET, UTC+1) esto caerá a las 06:00 en España,
+    # 17:00 UTC = 19:00 en España en horario de verano (CEST, UTC+2).
+    # En horario de invierno (CET, UTC+1) estas horas caerán una hora antes,
     # porque GitHub Actions no ajusta el cron automáticamente al cambio de hora.
     - cron: '0 5 * * *'
+    - cron: '0 17 * * *'
   workflow_dispatch:
 
 permissions:
