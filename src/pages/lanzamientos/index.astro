@@ -83,9 +83,9 @@ for (const item of ordenados) {
   <div class="wrap header-inner">
     <a class="wordmark" href="/">Apolo <span>Radar</span></a>
     <nav>
-      <a href="/lanzamientos" class="active">Lanzamientos</a>
       <a href="/noticias">Noticias</a>
       <a href="/marcas-a-seguir">Marcas a Seguir</a>
+      <a href="/lanzamientos" class="active">Lanzamientos</a>
     </nav>
     <a class="btn-subscribe" href="/#newsletter">Suscríbete</a>
   </div>
@@ -117,7 +117,7 @@ for (const item of ordenados) {
                   <span class="lanz-badge-mes">{badgeMes(item.isoDate)}</span>
                   <span class="lanz-badge-dia num">{badgeDia(item.isoDate)}</span>
                 </div>
-                <span class="lanz-tag">Próximamente</span>
+                {!item.isoDate && <span class="lanz-tag">Próximamente</span>}
               </div>
               <h4 class="lanz-title">{item.title}</h4>
             </a>
