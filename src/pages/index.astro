@@ -201,18 +201,27 @@ const heroSlides = slidesDeDrops.length > 0
       <a class="see-all" href="/noticias">Ver todos</a>
     </div>
     <div class="cal-row">
-      {drops.map((d) => (
+      {drops.map((d, i) => (
         <a class="cal-card" href={d.slug ? `/noticias/${d.slug}` : d.url}>
           <div class="cal-media">
             {d.image
               ? <img src={d.image} alt={d.model} loading="lazy" />
               : <span class="media-fallback">Sin imagen</span>}
+            <div class="cal-date-badge">
+              <span class="cal-badge-day">{d.day || '—'}</span>
+              <span class="cal-badge-date num">{d.date}</span>
+            </div>
+            {i === 0 && <span class="cal-proximo">Próximo</span>}
           </div>
-          <span class="cal-day">{d.day}</span>
-          <span class="cal-date num">{d.date}</span>
-          <span class="cal-model">{d.model}</span>
-          {d.stores?.length > 1 && <span class="cal-stores">{d.stores.join(', ')}</span>}
-          <div class="cal-foot"><span>{d.time}</span><span>{d.price}</span></div>
+          <div class="cal-body">
+            <h3 class="cal-model">{d.model}</h3>
+            {d.stores?.length > 0 && (
+              <div class="cal-stores-row">
+                {d.stores.slice(0, 3).map((s) => <span class="cal-store-pill">{s}</span>)}
+              </div>
+            )}
+            <div class="cal-foot"><span>{d.time}</span><span class="num">{d.price}</span></div>
+          </div>
         </a>
       ))}
     </div>
