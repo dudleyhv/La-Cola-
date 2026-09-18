@@ -10,9 +10,13 @@ const marcasDestacadas = [...marcas]
   .sort((a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime())
   .slice(0, 3);
 
+// Solo mostramos lanzamientos que ya tienen foto: uno sin imagen queda
+// mal en el escaparate principal de la web y transmite que está incompleto.
+const dropsConFoto = drops.filter((d) => d.image);
+
 // Carrusel de portada: usamos hasta 5 lanzamientos recientes como diapositivas.
 // Si todavía no hay ninguno, usamos hero.json como única diapositiva de reserva.
-const slidesDeDrops = drops.slice(0, 5).map((d) => ({
+const slidesDeDrops = dropsConFoto.slice(0, 5).map((d) => ({
   tag: 'Lanzamiento destacado',
   dateLabel: d.day && d.date !== 'Próximamente' ? `${d.day} ${d.date}` : '',
   title: d.model,
@@ -55,14 +59,32 @@ const heroSlides = slidesDeDrops.length > 0
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="wordmark" href="/">Apolo <span>Radar</span></a>
-    <nav>
-      <a href="#lanzamientos">Lanzamientos</a>
-      <a href="#noticias">Noticias</a>
+    <nav id="nav-principal">
+      <a href="/noticias">Noticias</a>
       <a href="/marcas-a-seguir">Marcas a Seguir</a>
+      <a href="/lanzamientos">Lanzamientos</a>
     </nav>
-    <a class="btn-subscribe" href="#newsletter">Suscríbete</a>
+    <div class="header-right">
+      <a class="btn-subscribe" href="#newsletter">Suscríbete</a>
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-principal">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById('menu-toggle');
+    const nav = document.getElementById('nav-principal');
+    if (!btn || !nav) return;
+    btn.addEventListener('click', function () {
+      const abierto = nav.classList.toggle('nav-abierto');
+      btn.classList.toggle('abierto', abierto);
+      btn.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    });
+  })();
+</script>
 
 <main class="wrap">
 
@@ -195,38 +217,6 @@ const heroSlides = slidesDeDrops.length > 0
     </script>
   )}
 
-  <section class="block" id="lanzamientos">
-    <div class="block-head">
-      <h2>Calendario de lanzamientos</h2>
-      <a class="see-all" href="/noticias">Ver todos</a>
-    </div>
-    <div class="cal-row">
-      {drops.map((d, i) => (
-        <a class="cal-card" href={d.slug ? `/noticias/${d.slug}` : d.url}>
-          <div class="cal-media">
-            {d.image
-              ? <img src={d.image} alt={d.model} loading="lazy" />
-              : <span class="media-fallback">Sin imagen</span>}
-            <div class="cal-date-badge">
-              <span class="cal-badge-day">{d.day || '—'}</span>
-              <span class="cal-badge-date num">{d.date}</span>
-            </div>
-            {i === 0 && <span class="cal-proximo">Próximo</span>}
-          </div>
-          <div class="cal-body">
-            <h3 class="cal-model">{d.model}</h3>
-            {d.stores?.length > 0 && (
-              <div class="cal-stores-row">
-                {d.stores.slice(0, 3).map((s) => <span class="cal-store-pill">{s}</span>)}
-              </div>
-            )}
-            <div class="cal-foot"><span>{d.time}</span><span class="num">{d.price}</span></div>
-          </div>
-        </a>
-      ))}
-    </div>
-  </section>
-
   <section class="block" id="noticias">
     <div class="block-head">
       <h2>Noticias</h2>
@@ -284,6 +274,38 @@ const heroSlides = slidesDeDrops.length > 0
       </div>
     </section>
   )}
+
+  <section class="block" id="lanzamientos">
+    <div class="block-head">
+      <h2>Lanzamientos que quizás te interesen</h2>
+      <a class="see-all" href="/lanzamientos">Ver todos</a>
+    </div>
+    <div class="cal-row">
+      {dropsConFoto.map((d, i) => (
+        <a class="cal-card" href={d.slug ? `/noticias/${d.slug}` : d.url}>
+          <div class="cal-media">
+            {d.image
+              ? <img src={d.image} alt={d.model} loading="lazy" />
+              : <span class="media-fallback">Sin imagen</span>}
+            <div class="cal-date-badge">
+              <span class="cal-badge-day">{d.day || '—'}</span>
+              <span class="cal-badge-date num">{d.date}</span>
+            </div>
+            {i === 0 && <span class="cal-proximo">Próximo</span>}
+          </div>
+          <div class="cal-body">
+            <h3 class="cal-model">{d.model}</h3>
+            {d.stores?.length > 0 && (
+              <div class="cal-stores-row">
+                {d.stores.slice(0, 3).map((s) => <span class="cal-store-pill">{s}</span>)}
+              </div>
+            )}
+            <div class="cal-foot"><span>{d.time}</span><span class="num">{d.price}</span></div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
 
   <section class="block newsletter" id="newsletter">
     <div>
