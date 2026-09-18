@@ -4,12 +4,56 @@ import fs from 'node:fs/promises';
 const FEEDS = [
   'https://sneakernews.com/feed/',
   'https://nicekicks.com/feed/',
+  'https://hypebeast.com/footwear/feed',
+  'https://sneakerbardetroit.com/feed/',
 ];
 
 const NEWS_PATH = new URL('../src/data/news.json', import.meta.url);
 const DROPS_PATH = new URL('../src/data/drops.json', import.meta.url);
 const HERO_PATH = new URL('../src/data/hero.json', import.meta.url);
 const ARTICULOS_PATH = new URL('../src/data/articulos.json', import.meta.url);
+
+function decodeEntities(str) {
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ');
+}
+
+function extractBodyText(html) {
+  let text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<\/(p|div|h1|h2|h3|li|br)>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ');
+  text = decodeEntities(text);
+  text = text.replace(/[ \t]+/g, ' ').replace(/\n\s*\n+/g, '\n').trim();
+  return text.slice(0, 6000);
+}
+
+async function fetchFullText(url) {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'user-agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+        accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'accept-language': 'es-ES,es;q=0.9,en;q=0.8',
+        referer: 'https://www.google.com/',
+      },
+    });
+    if (!response.ok) return null;
+    const html = await response.text();
+    const text = extractBodyText(html);
+    return text.length > 200 ? text : null;
+  } catch {
+    return null;
+  }
+}
 
 function extractImage(item) {
   if (item.enclosure?.url) return item.enclosure.url;
@@ -52,19 +96,34 @@ async function fetchLatestItems() {
     }
   }
   items.sort((a, b) => new Date(b.date) - new Date(a.date));
-  return items.slice(0, 10);
+  const seleccionados = items.slice(0, 10);
+
+  // Descargamos el texto completo de cada noticia (no solo el resumen del feed RSS)
+  // para poder redactar artículos con más contexto y detalle. Si una descarga falla,
+  // seguimos adelante con el resumen corto del feed como respaldo.
+  for (const item of seleccionados) {
+    item.fullText = await fetchFullText(item.link);
+  }
+
+  return seleccionados;
 }
 
 function buildPrompt(items, todayISO) {
   const listado = items
-    .map((it, i) => `${i + 1}. [${it.source}] ${it.title}\n${it.snippet}\nEnlace: ${it.link}`)
+    .map((it, i) => {
+      const texto = it.fullText || it.snippet;
+      return `${i + 1}. [${it.source}] ${it.title}\nEnlace: ${it.link}\nTexto disponible:\n"""\n${texto}\n"""`;
+    })
     .join('\n\n');
 
-  return `Eres el redactor de "Apolo Radar", una web española de noticias sobre sneakers y streetwear. Hoy es ${todayISO}.
+  return `Eres un redactor experto de "Apolo Radar", una web española de noticias sobre sneakers y streetwear, con el mismo nivel de detalle y contexto que un medio especializado como Sole Retriever o Hypebeast. Hoy es ${todayISO}.
 
-Te paso ${items.length} noticias reales recogidas hoy de varias fuentes en inglés. Elige la más relevante como destacada ("feature") y hasta 3 más como secundarias ("side"). Para cada una, redacta en ESPAÑOL y con tus propias palabras (nunca traduzcas ni copies frases literales de la fuente):
+Te paso ${items.length} noticias reales recogidas hoy de varias fuentes en inglés, con el texto de su página ya extraído cuando ha sido posible (si no, un resumen corto del feed). Elige la más relevante como destacada ("feature") y hasta 3 más como secundarias ("side"). Para cada una, redacta en ESPAÑOL y con tus propias palabras (nunca traduzcas ni copies frases literales de la fuente). Aprovecha todo el detalle relevante que aparezca en el texto disponible (contexto, colaboraciones o lanzamientos previos mencionados, inspiración del diseño, declaraciones si las hay) — cuanto más rico sea el texto de origen, más se debe desarrollar el artículo:
 - "excerpt": un resumen corto de 1-2 frases, para mostrar en las tarjetas de la portada.
-- "body": el texto completo de la página individual de la noticia, con 2 párrafos separados por un salto de línea doble. Debe desarrollar el contexto (qué se sabe, qué falta por confirmar) y mencionar de forma natural qué medio lo cuenta, sin inventar datos que no estén en el texto de origen.
+- "body": el texto completo de la página individual de la noticia, separado en párrafos con salto de línea doble:
+  - Para la noticia "feature": 4-5 párrafos (apertura, contexto/trasfondo, detalles concretos, cierre con la fuente y qué falta por confirmar).
+  - Para las noticias "side": 2-3 párrafos (apertura con lo esencial, algo de contexto, y la fuente).
+  Si el texto disponible es escaso (solo un resumen corto), escribe menos párrafos en vez de rellenar con paja, pero nunca inventes datos (fechas, precios, cifras, citas) que no estén explícitos en el texto de origen.
 
 El campo "url" de cada elemento debe ser EXACTAMENTE igual a uno de los enlaces que te doy abajo, sin modificarlo.
 
@@ -94,7 +153,7 @@ async function generateWithClaude(items) {
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 2600,
+      max_tokens: 4200,
       messages: [{ role: 'user', content: buildPrompt(items, todayISO) }],
     }),
   });
