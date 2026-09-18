@@ -4,6 +4,7 @@ import articulos from '../../data/articulos.json';
 import marcas from '../../data/marcas.json';
 import drops from '../../data/drops.json';
 import NotificacionFlotante from '../../components/NotificacionFlotante.astro';
+import Topico from '../../components/Topico.astro';
 
 // Solo publicamos lanzamientos que ya tienen foto: sin imagen, la ficha
 // se ve incompleta y no debería salir en este listado todavía.
@@ -139,6 +140,7 @@ for (const item of ordenados) {
                 </div>
                 {!item.isoDate && <span class="lanz-tag">Próximamente</span>}
               </div>
+              <Topico texto={item.topic} clase="lanz-topic" />
               <h4 class="lanz-title">{item.title}</h4>
             </a>
           ))}
