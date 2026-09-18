@@ -29,14 +29,32 @@ const resto = ordenadas.slice(3);
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="wordmark" href="/">Apolo <span>Radar</span></a>
-    <nav>
+    <nav id="nav-principal">
       <a href="/noticias">Noticias</a>
       <a href="/marcas-a-seguir" class="active">Marcas a Seguir</a>
       <a href="/lanzamientos">Lanzamientos</a>
     </nav>
-    <a class="btn-subscribe" href="/#newsletter">Suscríbete</a>
+    <div class="header-right">
+      <a class="btn-subscribe" href="/#newsletter">Suscríbete</a>
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-principal">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById('menu-toggle');
+    const nav = document.getElementById('nav-principal');
+    if (!btn || !nav) return;
+    btn.addEventListener('click', function () {
+      const abierto = nav.classList.toggle('nav-abierto');
+      btn.classList.toggle('abierto', abierto);
+      btn.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    });
+  })();
+</script>
 
 <main class="wrap">
 
