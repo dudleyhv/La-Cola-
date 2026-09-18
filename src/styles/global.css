@@ -43,6 +43,19 @@ nav a.active{color:var(--red);}
 }
 .btn-subscribe:hover{background:var(--red);}
 
+.header-right{display:flex;align-items:center;gap:14px;}
+
+.menu-toggle{
+  display:none;background:none;border:none;padding:6px;cursor:pointer;
+}
+.menu-toggle span{
+  display:block;width:24px;height:2px;background:var(--ink);margin:5px 0;
+  transition:transform .2s ease,opacity .2s ease;
+}
+.menu-toggle.abierto span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.menu-toggle.abierto span:nth-child(2){opacity:0;}
+.menu-toggle.abierto span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
 /* ---------- Hero (drop-of-the-day ticket) ---------- */
 .hero{display:grid;grid-template-columns:1fr 1.1fr;gap:0;margin:48px 0 64px;align-items:stretch;}
 .ticket{
@@ -277,7 +290,16 @@ footer{border-top:1px solid var(--line);margin-top:64px;padding:32px 0 48px;}
 
 /* ---------- Responsive ---------- */
 @media (max-width:760px){
-  nav{display:none;}
+  .header-inner{position:relative;}
+  .menu-toggle{display:block;}
+  nav{
+    position:absolute;top:100%;left:0;right:0;z-index:20;
+    background:var(--paper);border-bottom:2px solid var(--ink);
+    flex-direction:column;gap:0;max-height:0;overflow:hidden;
+    transition:max-height .25s ease;
+  }
+  nav.nav-abierto{max-height:280px;}
+  nav a{padding:16px 24px;border-bottom:1px solid var(--line);font-size:14px;}
   .hero{grid-template-columns:1fr;}
   .hero-art{min-height:220px;}
   .news-grid{grid-template-columns:1fr;}
