@@ -66,11 +66,21 @@ const { marca } = Astro.props;
   <span class="article-topic">Marca a seguir</span>
   <h1 class="article-title">{marca.name}</h1>
 
-  <div class="article-media">
-    {marca.image
-      ? <img src={marca.image} alt={marca.name} loading="lazy" />
-      : <span class="media-fallback">Sin imagen</span>}
-  </div>
+  {marca.images?.length > 1 ? (
+    <div class="release-gallery">
+      {marca.images.map((img, i) => (
+        <div class="release-gallery-item">
+          <img src={img} alt={`${marca.name} — foto ${i + 1}`} loading="lazy" />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div class="article-media">
+      {marca.image
+        ? <img src={marca.image} alt={marca.name} loading="lazy" />
+        : <span class="media-fallback">Sin imagen</span>}
+    </div>
+  )}
 
   <div class="article-body">
     <p>{marca.description}</p>
