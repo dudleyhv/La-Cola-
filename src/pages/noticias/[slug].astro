@@ -70,11 +70,45 @@ const esLanzamiento = articulo.type === 'lanzamiento';
   <h1 class="article-title">{articulo.title}</h1>
 
   {esLanzamiento && (
-    <div class="article-meta-row">
-      <span class="num">{articulo.day} {articulo.date}</span>
-      <span>{articulo.time}</span>
-      <span>{articulo.price}</span>
-      {articulo.stores?.length > 0 && <span>{articulo.stores.join(', ')}</span>}
+    <div class="release-panel">
+      <div class="release-block">
+        <p class="release-heading">Detalles del lanzamiento</p>
+        <div class="release-row">
+          <span class="release-label">Producto</span>
+          <span class="release-value">{articulo.title}</span>
+        </div>
+        <div class="release-row">
+          <span class="release-label">Fecha de lanzamiento</span>
+          <span class="release-value num">{articulo.day ? `${articulo.day} ${articulo.date}` : articulo.date}</span>
+        </div>
+        {articulo.sku && (
+          <div class="release-row">
+            <span class="release-label">SKU</span>
+            <span class="release-value num">{articulo.sku}</span>
+          </div>
+        )}
+        {articulo.colorway && (
+          <div class="release-row">
+            <span class="release-label">Colorway</span>
+            <span class="release-value">{articulo.colorway}</span>
+          </div>
+        )}
+        <div class="release-row">
+          <span class="release-label">Precio</span>
+          <span class="release-value num">{articulo.price}</span>
+        </div>
+      </div>
+
+      {articulo.compra?.length > 0 && (
+        <div class="release-block release-buy-block">
+          <p class="release-heading">Dónde comprarlo</p>
+          <div class="release-buy-list">
+            {articulo.compra.map((c) => (
+              <a class="release-buy-btn" href={c.url} target="_blank" rel="noopener">{c.tienda}</a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )}
 
