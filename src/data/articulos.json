@@ -68,6 +68,14 @@
     ],
     "sku": "IH7423-400",
     "colorway": "Racer Blue/Multicolor",
+    "images": [
+      "https://www.nicekicks.com/files/2026/06/IMG_1350.png",
+      "https://www.nicekicks.com/files/2026/06/ih7423-400-5-1200x1200.jpg",
+      "https://www.nicekicks.com/files/2026/06/ih7423-400-1-1200x1200.jpg",
+      "https://www.nicekicks.com/files/2026/06/ih7423-400-3-1200x1200.jpg",
+      "https://www.nicekicks.com/files/2026/06/ih7423-400-4-1200x1200.jpg",
+      "https://www.nicekicks.com/files/2026/06/ih7423-400-9-1200x1200.jpg"
+    ],
     "compra": [
       { "tienda": "Nike SNKRS", "url": "https://www.nike.com/launch" },
       { "tienda": "Nike.com (buscar)", "url": "https://www.nike.com/w?q=caitlin%201" }
@@ -165,6 +173,14 @@
     "price": "Por confirmar",
     "stores": [],
     "sku": "IU4876-200",
+    "images": [
+      "https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F09%2F16%2FTaller-De-Rafa-Nike-Air-Max-Goadome-Low-IU4876-200-Release-Info.jpg?q=90&w=800&cbr=1&fit=max",
+      "https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F09%2F16%2FTaller-De-Rafa-Nike-Air-Max-Goadome-Low-IU4876-200-Release-Info-1.jpg?q=90&w=800&cbr=1&fit=max",
+      "https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F09%2F16%2FTaller-De-Rafa-Nike-Air-Max-Goadome-Low-IU4876-200-Release-Info-2.jpg?q=90&w=800&cbr=1&fit=max",
+      "https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F09%2F16%2FTaller-De-Rafa-Nike-Air-Max-Goadome-Low-IU4876-200-Release-Info-3.jpg?q=90&w=800&cbr=1&fit=max",
+      "https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F09%2F16%2FTaller-De-Rafa-Nike-Air-Max-Goadome-Low-IU4876-200-Release-Info-4.jpg?q=90&w=800&cbr=1&fit=max",
+      "https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F09%2F16%2FTaller-De-Rafa-Nike-Air-Max-Goadome-Low-IU4876-200-Release-Info-5.jpg?q=90&w=800&cbr=1&fit=max"
+    ],
     "compra": [
       { "tienda": "Nike.com (buscar)", "url": "https://www.nike.com/w?q=air%20max%20goadome" },
       { "tienda": "Foot District (buscar)", "url": "https://www.footdistrict.com/search?q=air+max+goadome" }
@@ -187,6 +203,11 @@
     "time": "Por confirmar",
     "price": "Por confirmar",
     "stores": [],
+    "images": [
+      "http://mrevistademilenio.com/wp-content/uploads/2026/09/L45487300_A2_AMB_DOMINGO.png.webp",
+      "http://mrevistademilenio.com/wp-content/uploads/2026/09/L45487300_A3_AMB_DOMINGO.png.webp",
+      "http://mrevistademilenio.com/wp-content/uploads/2026/09/L45487300_A1_AMB_DOMINGO.png.webp"
+    ],
     "compra": [
       { "tienda": "Salomon.com (buscar)", "url": "https://www.salomon.com/es-es/search?q=xt-4%20domingo" },
       { "tienda": "Sivasdescalzo (buscar)", "url": "https://www.sivasdescalzo.com/search?q=salomon+xt-4" }
@@ -210,6 +231,14 @@
     "price": "$180-$190",
     "stores": [
       "Kith"
+    ],
+    "images": [
+      "https://images.soleretriever.com/blog/83b490cdedc0aa0d5f859ed09c4c7e87af146486-1240x760.png?rect=0,55,1240,651&w=1200&h=630&fit=fill&auto=format",
+      "https://images.soleretriever.com/blog/9e82ae2a24e2cf8c16474f6e7e10bfdcc4d91e37-2140x1520.png?quality=90&fit=clip&auto=format&width=1600",
+      "https://images.soleretriever.com/blog/7b99d0fe8354180f9469b6bf6ed9fc98f3837b65-2140x1520.png?q=75&fit=clip&auto=format&width=1600",
+      "https://images.soleretriever.com/blog/44a5c3485a86176356697908cd89fbdcf60e72c8-2140x1520.png?q=75&fit=clip&auto=format&width=1600",
+      "https://images.soleretriever.com/blog/6ed48b4dfb6a421a46fff1c37031c6e9b13ccbd-2140x1520.png?q=75&fit=clip&auto=format&width=1600",
+      "https://images.soleretriever.com/blog/63aa2e82f66f4136d306a7009cb6e55bd2642a39-2140x1520.png?q=75&fit=clip&auto=format&width=1600"
     ],
     "compra": [
       { "tienda": "Kith.com", "url": "https://kith.com" },
