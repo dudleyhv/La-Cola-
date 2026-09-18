@@ -4,6 +4,7 @@ import articulos from '../../data/articulos.json';
 import marcas from '../../data/marcas.json';
 import drops from '../../data/drops.json';
 import NotificacionFlotante from '../../components/NotificacionFlotante.astro';
+import Topico from '../../components/Topico.astro';
 
 // Igual que en el resto de la web, no listamos artículos sin foto todavía.
 const ordenados = articulos
@@ -71,7 +72,7 @@ const ordenados = articulos
               ? <img src={a.image} alt={a.title} loading="lazy" />
               : <span class="media-fallback">Sin imagen</span>}
           </div>
-          <span class="topic">{a.topic}</span>
+          <Topico texto={a.topic} />
           <h4>{a.title}</h4>
         </a>
       ))}
