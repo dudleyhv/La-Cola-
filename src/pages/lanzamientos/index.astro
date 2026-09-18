@@ -1,0 +1,144 @@
+---
+import '../../styles/global.css';
+import articulos from '../../data/articulos.json';
+import marcas from '../../data/marcas.json';
+import drops from '../../data/drops.json';
+import NotificacionFlotante from '../../components/NotificacionFlotante.astro';
+
+const lanzamientos = articulos.filter((a) => a.type === 'lanzamiento');
+
+const hoy = new Date();
+hoy.setHours(0, 0, 0, 0);
+
+function diasHasta(isoDate) {
+  const d = new Date(isoDate + 'T00:00:00');
+  return Math.round((d.getTime() - hoy.getTime()) / 86400000);
+}
+
+function capitalizar(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function etiquetaGrupo(isoDate) {
+  if (!isoDate) return 'Próximamente';
+  const diff = diasHasta(isoDate);
+  if (diff === 0) return 'Hoy';
+  if (diff === 1) return 'Mañana';
+  const d = new Date(isoDate + 'T00:00:00');
+  if (diff > 1 && diff <= 6) {
+    return capitalizar(new Intl.DateTimeFormat('es-ES', { weekday: 'long' }).format(d));
+  }
+  return capitalizar(new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' }).format(d));
+}
+
+function badgeMes(isoDate) {
+  if (!isoDate) return '—';
+  const d = new Date(isoDate + 'T00:00:00');
+  return new Intl.DateTimeFormat('es-ES', { month: 'short' }).format(d).replace('.', '').toUpperCase();
+}
+
+function badgeDia(isoDate) {
+  if (!isoDate) return '?';
+  const d = new Date(isoDate + 'T00:00:00');
+  return d.getDate();
+}
+
+// Ordenamos: primero los que tienen fecha confirmada (más próximos antes),
+// y al final los que todavía no tienen fecha ("Próximamente").
+const ordenados = [...lanzamientos].sort((a, b) => {
+  if (!a.isoDate && !b.isoDate) return 0;
+  if (!a.isoDate) return 1;
+  if (!b.isoDate) return -1;
+  return new Date(a.isoDate).getTime() - new Date(b.isoDate).getTime();
+});
+
+const grupos = [];
+for (const item of ordenados) {
+  const etiqueta = etiquetaGrupo(item.isoDate);
+  let grupo = grupos.find((g) => g.etiqueta === etiqueta);
+  if (!grupo) {
+    grupo = { etiqueta, items: [] };
+    grupos.push(grupo);
+  }
+  grupo.items.push(item);
+}
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lanzamientos que quizás te interesen — Apolo Radar</title>
+  <meta name="description" content="Lanzamientos de sneakers y streetwear realmente relevantes, con foco en marcas emergentes más allá de Nike, adidas o Puma." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="/">Apolo <span>Radar</span></a>
+    <nav>
+      <a href="/lanzamientos" class="active">Lanzamientos</a>
+      <a href="/noticias">Noticias</a>
+      <a href="/marcas-a-seguir">Marcas a Seguir</a>
+    </nav>
+    <a class="btn-subscribe" href="/#newsletter">Suscríbete</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="block">
+    <div class="block-head">
+      <h2>Lanzamientos que quizás te interesen</h2>
+    </div>
+    <p class="marcas-intro">
+      Aquí no vas a encontrar todos los restocks del día: solo los lanzamientos que de verdad nos parecen
+      relevantes, con especial atención a marcas emergentes y colaboraciones interesantes más allá de
+      lo de siempre (Nike, adidas, Puma...).
+    </p>
+
+    {grupos.map((grupo) => (
+      <div class="lanz-grupo">
+        <h3 class="lanz-grupo-titulo">{grupo.etiqueta}</h3>
+        <div class="lanz-grid">
+          {grupo.items.map((item) => (
+            <a class="lanz-card" href={`/noticias/${item.slug}`}>
+              <div class="lanz-media">
+                {item.image
+                  ? <img src={item.image} alt={item.title} loading="lazy" />
+                  : <span class="media-fallback">Sin imagen</span>}
+                <div class="lanz-badge">
+                  <span class="lanz-badge-mes">{badgeMes(item.isoDate)}</span>
+                  <span class="lanz-badge-dia num">{badgeDia(item.isoDate)}</span>
+                </div>
+                <span class="lanz-tag">Próximamente</span>
+              </div>
+              <h4 class="lanz-title">{item.title}</h4>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+
+    {lanzamientos.length === 0 && <p>Todavía no hay lanzamientos publicados. ¡Vuelve pronto!</p>}
+  </section>
+
+</main>
+
+<NotificacionFlotante marcas={marcas} drops={drops} />
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>© 2026 Apolo Radar</span>
+    <span>Aviso de afiliados · Contacto · Envía un drop</span>
+  </div>
+</footer>
+
+</body>
+</html>
