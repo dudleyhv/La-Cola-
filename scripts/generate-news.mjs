@@ -6,6 +6,8 @@ const FEEDS = [
   'https://nicekicks.com/feed/',
   'https://hypebeast.com/footwear/feed',
   'https://sneakerbardetroit.com/feed/',
+  'https://sneakerfiles.com/feed/',
+  'https://sneakerfreaker.com/rss.xml',
 ];
 
 const NEWS_PATH = new URL('../src/data/news.json', import.meta.url);
