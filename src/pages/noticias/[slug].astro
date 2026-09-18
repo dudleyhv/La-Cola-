@@ -113,11 +113,21 @@ const esLanzamiento = articulo.type === 'lanzamiento';
     </div>
   )}
 
-  <div class="article-media">
-    {articulo.image
-      ? <img src={articulo.image} alt={articulo.title} loading="lazy" />
-      : <span class="media-fallback">Sin imagen</span>}
-  </div>
+  {articulo.images?.length > 1 ? (
+    <div class="release-gallery">
+      {articulo.images.map((img, i) => (
+        <div class="release-gallery-item">
+          <img src={img} alt={`${articulo.title} — foto ${i + 1}`} loading="lazy" />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div class="article-media">
+      {articulo.image
+        ? <img src={articulo.image} alt={articulo.title} loading="lazy" />
+        : <span class="media-fallback">Sin imagen</span>}
+    </div>
+  )}
 
   <div class="article-body">
     {parrafos.map((p) => <p>{p}</p>)}
