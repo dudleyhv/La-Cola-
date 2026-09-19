@@ -37,7 +37,23 @@ function extractBodyText(html) {
   return text.slice(0, 6000);
 }
 
-async function fetchFullText(url) {
+// Si el feed RSS no trae ninguna imagen utilizable, intentamos sacarla directamente
+// de la página del artículo (etiquetas og:image / twitter:image), que casi todos los
+// medios rellenan aunque su RSS no incluya imágenes. Esto evita fichas "sin imagen"
+// cuando la única fuente disponible es un sitio como Sneaker Bar Detroit.
+function extractOgImage(html) {
+  const og =
+    html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ||
+    html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+  if (og) return og[1];
+  const tw =
+    html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i) ||
+    html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i);
+  if (tw) return tw[1];
+  return null;
+}
+
+async function fetchPage(url) {
   try {
     const response = await fetch(url, {
       headers: {
@@ -48,12 +64,13 @@ async function fetchFullText(url) {
         referer: 'https://www.google.com/',
       },
     });
-    if (!response.ok) return null;
+    if (!response.ok) return { text: null, image: null };
     const html = await response.text();
     const text = extractBodyText(html);
-    return text.length > 200 ? text : null;
+    const image = extractOgImage(html);
+    return { text: text.length > 200 ? text : null, image };
   } catch {
-    return null;
+    return { text: null, image: null };
   }
 }
 
@@ -100,8 +117,16 @@ async function fetchLatestItems() {
   items.sort((a, b) => new Date(b.date) - new Date(a.date));
   const seleccionados = items.slice(0, 10);
 
+  // Descargamos el texto completo de cada noticia (no solo el resumen del feed RSS)
+  // para poder redactar artículos con más contexto y detalle. Si una descarga falla,
+  // seguimos adelante con el resumen corto del feed como respaldo. Aprovechamos la
+  // misma descarga para rescatar una imagen (og:image) cuando el feed no traía ninguna.
   for (const item of seleccionados) {
-    item.fullText = await fetchFullText(item.link);
+    const pagina = await fetchPage(item.link);
+    item.fullText = pagina.text;
+    if (!item.image && pagina.image) {
+      item.image = pagina.image;
+    }
   }
 
   return seleccionados;
@@ -271,9 +296,9 @@ async function main() {
     // 1. ¿Ya existe un artículo con este mismo enlace de origen?
     let article = archive.find((a) => a.sourceUrl === url);
 
-    // 2. Si no, ¿ya existe un artículo con el mismo titular (normalizado)?
-    //    Esto evita duplicados cuando dos fuentes distintas (o dos tandas
-    //    del día) cubren la misma noticia con el mismo título.
+    // 2. Si no, ¿ya existe un artículo con el mismo titular (normalizado)? Esto
+    // evita duplicados cuando dos feeds cubren la misma historia con enlaces
+    // distintos, o cuando una noticia vuelve a aparecer en una pasada posterior.
     if (!article) {
       const normalizado = normalizeTitle(title);
       article = archive.find((a) => normalizeTitle(a.title) === normalizado);
@@ -330,6 +355,9 @@ async function main() {
   await fs.writeFile(NEWS_PATH, JSON.stringify(news, null, 2) + '\n');
   console.log('src/data/news.json actualizado.');
 
+  // "Lanzamientos" (calendario) ya no se genera aquí de forma automática:
+  // se gestiona a mano con scripts/generate-lanzamiento.mjs. Aquí solo lo leemos
+  // para decidir qué aparece en el hero de portada.
   const drops = await loadJson(DROPS_PATH, []);
   const hero = buildHero(drops, news);
   await fs.writeFile(HERO_PATH, JSON.stringify(hero, null, 2) + '\n');
