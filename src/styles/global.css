@@ -96,6 +96,41 @@ nav a.active{border-bottom-color:var(--white);}
 .hero-art img{width:100%;height:100%;object-fit:cover;display:block;}
 .hero-video{width:100%;height:100%;object-fit:cover;display:block;}
 
+/* ---------- Hero a pantalla completa (vídeo de portada, estilo cinematográfico) ---------- */
+.hero-full{
+  position:relative;width:100%;height:100vh;min-height:560px;max-height:900px;
+  overflow:hidden;background:#0F0F12;margin:0 0 64px;
+}
+.hero-full-video{
+  position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;
+}
+.hero-full-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,.15) 35%,rgba(0,0,0,.75) 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;color:var(--white);padding:32px 20px;
+}
+.hero-full-wordmark{
+  font-family:'Archivo Black',sans-serif;font-size:clamp(28px,6vw,56px);
+  letter-spacing:.02em;color:var(--white);text-transform:uppercase;
+}
+.hero-full-wordmark span{color:var(--red);}
+.hero-full-info{
+  margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:14px;max-width:560px;
+}
+.hero-full-info .ticket-eyebrow-row{justify-content:center;gap:12px;}
+.hero-full-info h1{font-size:clamp(20px,3.2vw,32px);color:var(--white);line-height:1.25;}
+.countdown--light{color:#D8D7D0;}
+.cta--light{border-color:var(--white);color:var(--white);}
+.cta--light:hover{background:var(--white);color:var(--ink);}
+.hero-full-scroll{
+  position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+  font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#D8D7D0;
+}
+@media (max-width:600px){
+  .hero-full{height:82vh;min-height:460px;}
+}
+
 /* ---------- Fila de lanzamientos destacados (debajo del vídeo de portada) ---------- */
 .destacados-row{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
