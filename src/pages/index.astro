@@ -118,34 +118,34 @@ const destacadosRow = dropsConFoto.length > 1
   })();
 </script>
 
-<main class="wrap">
+<section class="hero-full">
+  <video
+    class="hero-full-video"
+    autoplay
+    muted
+    loop
+    playsinline
+    poster={heroSlides[0].image || undefined}
+  >
+    <source src="/portada/video-semana.mp4" type="video/mp4" />
+  </video>
+  <div class="hero-full-overlay">
+    <span class="hero-full-wordmark">APOLO <span>RADAR</span></span>
 
-  <section class="hero">
-    <div class="ticket">
+    <div class="hero-full-info">
       <div class="ticket-eyebrow-row">
         <span class="tag-pill">{heroSlides[0].tag}</span>
-        {heroSlides[0].dateLabel && <span class="countdown">{heroSlides[0].dateLabel}</span>}
+        {heroSlides[0].dateLabel && <span class="countdown countdown--light">{heroSlides[0].dateLabel}</span>}
       </div>
       <h1>{heroSlides[0].title}</h1>
-      <p class="meta">{heroSlides[0].description}</p>
-      <div class="price-row">
-        <span class="store">{heroSlides[0].store}</span>
-      </div>
-      <a class="cta" href={heroSlides[0].href}>{heroSlides[0].ctaText}</a>
+      <a class="cta cta--light" href={heroSlides[0].href}>{heroSlides[0].ctaText}</a>
     </div>
-    <div class="hero-art">
-      <video
-        class="hero-video"
-        autoplay
-        muted
-        loop
-        playsinline
-        poster={heroSlides[0].image || undefined}
-      >
-        <source src="/portada/video-semana.mp4" type="video/mp4" />
-      </video>
-    </div>
-  </section>
+
+    <span class="hero-full-scroll">Desliza para ver más ↓</span>
+  </div>
+</section>
+
+<main class="wrap">
 
   {destacadosRow.length > 0 && (
     <section class="destacados-row">
