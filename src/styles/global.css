@@ -318,6 +318,17 @@ section.block{margin:64px 0;}
 }
 .sub-form button:hover{background:var(--white);color:var(--ink);}
 
+/* ---------- Sobre nosotros ---------- */
+.about-us{background:var(--ink);color:var(--white);padding:72px 0;}
+.about-us-inner{max-width:640px;}
+.about-us-eyebrow{
+  display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:#B9B8B0;margin-bottom:16px;
+}
+.about-us-statement{color:var(--white);font-size:32px;margin-bottom:22px;}
+.about-us-text{color:#B9B8B0;font-size:15px;line-height:1.7;max-width:60ch;margin:0 0 16px;}
+.about-us-text:last-child{margin-bottom:0;}
+
 /* ---------- Footer ---------- */
 footer{border-top:1px solid var(--line);margin-top:64px;padding:32px 0 48px;}
 .foot-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);}
