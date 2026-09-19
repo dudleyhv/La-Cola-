@@ -4,8 +4,22 @@ import hero from '../data/hero.json';
 import drops from '../data/drops.json';
 import news from '../data/news.json';
 import marcas from '../data/marcas.json';
+import articulos from '../data/articulos.json';
 import NotificacionFlotante from '../components/NotificacionFlotante.astro';
 import Topico from '../components/Topico.astro';
+
+// news.json no guarda fecha ni fuente, pero el artículo ya está también en la
+// hemeroteca (articulos.json) con esos datos: los recuperamos por slug para
+// poder mostrar "Fuente · fecha" bajo la noticia destacada y las secundarias.
+function metaDe(slug) {
+  const a = articulos.find((x) => x.slug === slug);
+  if (!a) return '';
+  const fecha = new Date(a.publishedAt + 'T00:00:00').toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'short',
+  });
+  return a.sourceName ? `${a.sourceName} · ${fecha}` : fecha;
+}
 
 const marcasDestacadas = [...marcas]
   .sort((a, b) => new Date(b.firstFeatured).getTime() - new Date(a.firstFeatured).getTime())
@@ -157,6 +171,7 @@ const destacadosRow = dropsConFoto.length > 1
         <Topico texto={news.feature.topic} />
         <h3>{news.feature.title}</h3>
         <p>{news.feature.excerpt}</p>
+        {metaDe(news.feature.slug) && <span class="news-meta">{metaDe(news.feature.slug)}</span>}
       </a>
       <div class="news-side">
         {news.side.map((n) => (
@@ -168,6 +183,7 @@ const destacadosRow = dropsConFoto.length > 1
             </div>
             <Topico texto={n.topic} />
             <h4>{n.title}</h4>
+            {metaDe(n.slug) && <span class="news-meta">{metaDe(n.slug)}</span>}
           </a>
         ))}
       </div>
