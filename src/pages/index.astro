@@ -145,11 +145,11 @@ const destacadosRow = dropsConFoto.length > 1
     const pista = document.getElementById('hero-scroll-hint');
     if (!seccion || !mascara) return;
 
-    // Tamaño del agujero de las letras al principio (pequeño) y al final
-    // del recorrido de scroll (mucho más grande que la pantalla, para que
-    // el vídeo quede completamente al descubierto).
-    const TAMANO_INICIAL = Math.min(window.innerWidth * 0.78, 920);
-    const TAMANO_FINAL = Math.max(window.innerWidth, window.innerHeight) * 2.4;
+    // El "zoom" va de 1 (letras normales, tamaño inicial) a ZOOM_FINAL
+    // (las letras se agrandan mucho más que la pantalla). Se anima con
+    // "transform", que el navegador puede mover de forma muy fluida
+    // (a diferencia de recalcular la máscara en cada fotograma).
+    const ZOOM_FINAL = 9;
 
     let ticking = false;
 
@@ -160,8 +160,8 @@ const destacadosRow = dropsConFoto.length > 1
       let progreso = recorrido > 0 ? -rect.top / recorrido : 0;
       progreso = Math.min(1, Math.max(0, progreso));
 
-      const tamanoActual = TAMANO_INICIAL + (TAMANO_FINAL - TAMANO_INICIAL) * progreso;
-      mascara.style.setProperty('--hero-mask-size', tamanoActual + 'px');
+      const zoomActual = 1 + (ZOOM_FINAL - 1) * progreso;
+      mascara.style.setProperty('--hero-zoom', String(zoomActual));
       mascara.style.opacity = String(1 - progreso);
       if (pista) pista.style.opacity = String(1 - progreso * 2.5);
     }
