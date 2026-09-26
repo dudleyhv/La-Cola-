@@ -108,18 +108,24 @@ nav a.active{border-bottom-color:var(--white);}
 .hero-full-video{
   position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;
 }
-/* Capa sólida colocada encima del vídeo, con las letras "APOLO RADAR" recortadas
-   (a modo de plantilla) para que el vídeo se vea únicamente a través de ellas.
-   El tamaño de ese recorte (--hero-mask-size) lo va agrandando el script de
-   scroll hasta cubrir toda la pantalla, dejando el vídeo al descubierto. */
+/* Capa con la foto de fondo, colocada encima del vídeo, con las letras
+   "APOLO RADAR" recortadas (a modo de plantilla) para que el vídeo se vea
+   únicamente a través de ellas. Cubre TODA la pantalla desde el principio
+   (mask-size:cover), sin ninguna caja alrededor del texto.
+   El "zoom" que hace el script de scroll se aplica con transform (no
+   recalculando la máscara), que es mucho más fluido para el navegador. */
 .hero-full-bg{
-  position:absolute;inset:0;background:var(--ink);
-  --hero-mask-size:min(78vw,920px);
+  position:absolute;inset:0;
+  background-image:url('/portada/hero-fondo.jpg');
+  background-size:cover;background-position:center;
   -webkit-mask-image:url('/portada/hero-mask.svg');
   mask-image:url('/portada/hero-mask.svg');
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
   -webkit-mask-position:center;mask-position:center;
-  -webkit-mask-size:var(--hero-mask-size) auto;mask-size:var(--hero-mask-size) auto;
+  -webkit-mask-size:cover;mask-size:cover;
+  transform:scale(var(--hero-zoom,1));
+  transform-origin:center center;
+  will-change:transform,opacity;
 }
 .hero-full-overlay{
   position:absolute;inset:0;
@@ -140,7 +146,12 @@ nav a.active{border-bottom-color:var(--white);}
      Aquí mostramos el vídeo completo (sin recortar) con franjas negras arriba/abajo
      en vez de ampliarlo y perder los lados de la escena. */
   .hero-full-video{object-fit:contain;background:#0F0F12;}
-  .hero-full-bg{--hero-mask-size:88vw;}
+  /* En móvil el texto se parte en dos líneas para que quepa mejor en una
+     pantalla estrecha y vertical. */
+  .hero-full-bg{
+    -webkit-mask-image:url('/portada/hero-mask-mobile.svg');
+    mask-image:url('/portada/hero-mask-mobile.svg');
+  }
 }
 @media (prefers-reduced-motion:reduce){
   .hero-scroll{height:100vh;}
