@@ -118,23 +118,66 @@ const destacadosRow = dropsConFoto.length > 1
   })();
 </script>
 
-<section class="hero-full">
-  <video
-    class="hero-full-video"
-    autoplay
-    muted
-    loop
-    playsinline
-    poster={heroSlides[0].image || undefined}
-  >
-    <source src="/portada/video-semana.mp4" type="video/mp4" />
-  </video>
-  <div class="hero-full-bg" role="img" aria-label="Apolo Radar"></div>
-  <h1 class="sr-only">Apolo Radar</h1>
-  <div class="hero-full-overlay">
-    <span class="hero-full-scroll">Desliza para ver más ↓</span>
+<section class="hero-scroll" id="hero-scroll">
+  <div class="hero-scroll-stick">
+    <video
+      class="hero-full-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      poster={heroSlides[0].image || undefined}
+    >
+      <source src="/portada/video-semana.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-full-bg" id="hero-mask-layer" role="img" aria-label="Apolo Radar"></div>
+    <h1 class="sr-only">Apolo Radar</h1>
+    <div class="hero-full-overlay" id="hero-scroll-hint">
+      <span class="hero-full-scroll">Desliza para ver más ↓</span>
+    </div>
   </div>
 </section>
+
+<script is:inline>
+  (function () {
+    const seccion = document.getElementById('hero-scroll');
+    const mascara = document.getElementById('hero-mask-layer');
+    const pista = document.getElementById('hero-scroll-hint');
+    if (!seccion || !mascara) return;
+
+    // Tamaño del agujero de las letras al principio (pequeño) y al final
+    // del recorrido de scroll (mucho más grande que la pantalla, para que
+    // el vídeo quede completamente al descubierto).
+    const TAMANO_INICIAL = Math.min(window.innerWidth * 0.78, 920);
+    const TAMANO_FINAL = Math.max(window.innerWidth, window.innerHeight) * 2.4;
+
+    let ticking = false;
+
+    function actualizar() {
+      ticking = false;
+      const rect = seccion.getBoundingClientRect();
+      const recorrido = seccion.offsetHeight - window.innerHeight;
+      let progreso = recorrido > 0 ? -rect.top / recorrido : 0;
+      progreso = Math.min(1, Math.max(0, progreso));
+
+      const tamanoActual = TAMANO_INICIAL + (TAMANO_FINAL - TAMANO_INICIAL) * progreso;
+      mascara.style.setProperty('--hero-mask-size', tamanoActual + 'px');
+      mascara.style.opacity = String(1 - progreso);
+      if (pista) pista.style.opacity = String(1 - progreso * 2.5);
+    }
+
+    function solicitarActualizacion() {
+      if (!ticking) {
+        window.requestAnimationFrame(actualizar);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', solicitarActualizacion, { passive: true });
+    window.addEventListener('resize', solicitarActualizacion);
+    actualizar();
+  })();
+</script>
 
 <main class="wrap">
 
