@@ -96,23 +96,30 @@ nav a.active{border-bottom-color:var(--white);}
 .hero-art img{width:100%;height:100%;object-fit:cover;display:block;}
 .hero-video{width:100%;height:100%;object-fit:cover;display:block;}
 
-/* ---------- Hero a pantalla completa (vídeo de portada, estilo cinematográfico) ---------- */
-.hero-full{
-  position:relative;width:100%;height:100vh;min-height:560px;max-height:900px;
-  overflow:hidden;background:#0F0F12;margin:0 0 64px;
+/* ---------- Hero de entrada con scroll (nombre recortado sobre vídeo, que se
+   abre a pantalla completa al bajar) ---------- */
+.hero-scroll{
+  position:relative;height:260vh;margin:0 0 64px;
+}
+.hero-scroll-stick{
+  position:sticky;top:0;height:100vh;min-height:560px;
+  overflow:hidden;background:#0F0F12;
 }
 .hero-full-video{
   position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;
 }
 /* Capa sólida colocada encima del vídeo, con las letras "APOLO RADAR" recortadas
-   (a modo de plantilla) para que el vídeo se vea únicamente a través de ellas. */
+   (a modo de plantilla) para que el vídeo se vea únicamente a través de ellas.
+   El tamaño de ese recorte (--hero-mask-size) lo va agrandando el script de
+   scroll hasta cubrir toda la pantalla, dejando el vídeo al descubierto. */
 .hero-full-bg{
   position:absolute;inset:0;background:var(--ink);
+  --hero-mask-size:min(78vw,920px);
   -webkit-mask-image:url('/portada/hero-mask.svg');
   mask-image:url('/portada/hero-mask.svg');
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
   -webkit-mask-position:center;mask-position:center;
-  -webkit-mask-size:min(78vw,920px) auto;mask-size:min(78vw,920px) auto;
+  -webkit-mask-size:var(--hero-mask-size) auto;mask-size:var(--hero-mask-size) auto;
 }
 .hero-full-overlay{
   position:absolute;inset:0;
@@ -128,12 +135,16 @@ nav a.active{border-bottom-color:var(--white);}
   clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
 @media (max-width:600px){
-  .hero-full{height:82vh;min-height:460px;}
+  .hero-scroll-stick{height:82vh;min-height:460px;}
   /* En pantallas verticales estrechas, el vídeo panorámico no cabe sin recortarse.
      Aquí mostramos el vídeo completo (sin recortar) con franjas negras arriba/abajo
      en vez de ampliarlo y perder los lados de la escena. */
   .hero-full-video{object-fit:contain;background:#0F0F12;}
-  .hero-full-bg{-webkit-mask-size:88vw auto;mask-size:88vw auto;}
+  .hero-full-bg{--hero-mask-size:88vw;}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-scroll{height:100vh;}
+  .hero-scroll-stick{position:relative;}
 }
 
 /* ---------- Fila de lanzamientos destacados (debajo del vídeo de portada) ---------- */
