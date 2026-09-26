@@ -16,7 +16,7 @@
     "description": "Colección de ropa de rendimiento natural lanzada por Arpita Rout que va más allá del concepto tradicional de moda sostenible. Propone una aproximación innovadora combinando textiles naturales con funcionalidad técnica para el uso cotidiano.",
     "sourceUrl": "https://www.google.com/url?rct=j&sa=t&url=https://indianretailer.com/brandlicense/archives/news/arpita-routs-intent-debuts-natural-performance-clothing-collection.n5927&ct=ga&cd=CAIyHGRiNzM3OWIxYzViODkxMWM6Y29tOmVzOlVTOkw&usg=AOvVaw2zLUld2Psp57LxbGAHCKQM",
     "instagram": "https://www.instagram.com/intentwear/",
-    "shopUrl": "https://intentwear.in/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAcGRvZgJleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAad-_tF4S9cr2xfa3Tc7ymWKFGgplxJFEXfUpoomwJfFFZlTHn_kWMU60nwLVg_aem_ZAvPGW0dn9YXTzx_GiGyYA",
+    "shopUrl": "https://intentwear.in/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAcGRvZgJleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA01MzY2MTk3NDMzOTI0NTkAAad-_tF4S9cr2xfa3Tc7ymWKFGgplxJFEXfUpoomwJfFFZlTHn_kWMU60nwLVg_aem_ZAvPGW0dn9YXTzx_GiGyYA",
     "image": "/marcas/Untitled design - 2026-09-14T142613.265.jpg",
     "firstFeatured": "2026-09-15",
     "updates": []
@@ -63,6 +63,39 @@
     "shopUrl": "https://cuartersolutions.com",
     "image": "/marcas/cuarter.png",
     "firstFeatured": "2026-09-18",
+    "updates": []
+  },
+  {
+    "slug": "5mc2",
+    "name": "5mc2",
+    "description": "Marca de streetwear italiana con diseño de inspiración londinense, nacida en Molise, una región remota de Italia. Confeccionan a mano hoodies, chaquetas, camisetas y gorras bajo el concepto de \"libertad creativa\", cuidando cada etapa del proceso para que cada prenda cuente su propia historia.",
+    "sourceUrl": "https://5mc2.com",
+    "instagram": "https://www.instagram.com/5mc2.lab/",
+    "shopUrl": "https://5mc2.com",
+    "image": "https://5mc2.com/cdn/shop/files/5mc2_world_fam.png?v=1665067947&width=2048",
+    "firstFeatured": "2026-09-26",
+    "updates": []
+  },
+  {
+    "slug": "fdr-studios",
+    "name": "FDR Studios",
+    "description": "Marca de streetwear premium unisex fundada en 2019, con una estética que mezcla el cyber Y2K con el techwear: hoodies oversized, chaquetas estructuradas y piezas utilitarias. Según ellos mismos, su propuesta nace \"de la crudeza de las subculturas underground\".",
+    "sourceUrl": "https://fdrstudios.com/pages/fdr-brand-story",
+    "instagram": "https://www.instagram.com/fdr.official/",
+    "shopUrl": "https://fdrstudios.com/es",
+    "image": "https://fdrstudios.com/cdn/shop/files/SHOP_Cyber_Y2K_Aesthetics.webp?v=1778646856",
+    "firstFeatured": "2026-09-26",
+    "updates": []
+  },
+  {
+    "slug": "withme-clo",
+    "name": "Withme Clo",
+    "description": "Marca de ropa urbana y contemporánea con sudaderas, camisetas, pantalones y accesorios en paletas neutras combinadas con toques de color y camuflaje. Una propuesta sencilla para el día a día, con presencia activa en Instagram y TikTok.",
+    "sourceUrl": null,
+    "instagram": "https://www.instagram.com/withmeclo/",
+    "shopUrl": "https://withmeclo.com",
+    "image": "https://withmeclo.com/cdn/shop/files/withme_b952051e-e10f-432a-9e2f-98c7c8b9490f.png?v=1782257472&width=1500",
+    "firstFeatured": "2026-09-26",
     "updates": []
   }
 ]
