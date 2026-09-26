@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1600">
+  <defs>
+    <mask id="cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="1600">
+      <rect x="0" y="0" width="800" height="1600" fill="#ffffff"/>
+      <text
+        x="400" y="770"
+        text-anchor="middle"
+        font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+        font-weight="900"
+        font-size="150"
+        textLength="640"
+        lengthAdjust="spacingAndGlyphs"
+        fill="#000000"
+      >APOLO</text>
+      <text
+        x="400" y="940"
+        text-anchor="middle"
+        font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+        font-weight="900"
+        font-size="150"
+        textLength="700"
+        lengthAdjust="spacingAndGlyphs"
+        fill="#000000"
+      >RADAR</text>
+    </mask>
+  </defs>
+  <rect x="0" y="0" width="800" height="1600" fill="#ffffff" mask="url(#cutout)"/>
+</svg>
